@@ -1,5 +1,5 @@
-- 제목 : feat(issue 번호): 기능명 - 이름
-  ex) feat(17): pull request template - 홍길동
+- 제목 : feat: 기능명 
+  ex) feat: pull request template 
   (확인 후 지워주세요)
 
 ## 🛠️ 작업 내용
