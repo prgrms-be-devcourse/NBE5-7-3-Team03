@@ -34,6 +34,7 @@ public class ExceptionAdvice {
                 case FORBIDDEN -> HttpStatus.FORBIDDEN;
                 case NOT_FOUND -> HttpStatus.NOT_FOUND;
                 case CONFLICT -> HttpStatus.CONFLICT;
+                case UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
             };
 
             return ResponseEntity.status(httpStatus)

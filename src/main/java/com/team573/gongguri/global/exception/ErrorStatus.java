@@ -4,5 +4,6 @@ public enum ErrorStatus {
     BAD_REQUEST,
     FORBIDDEN,
     NOT_FOUND,
-    CONFLICT
+    CONFLICT,
+    UNAUTHORIZED
 }

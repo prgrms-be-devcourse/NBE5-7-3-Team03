@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/chat/chat-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: mobileContainer}">
+  <div th:fragment="content">
+    <!-- Top bar component -->
+    <div th:replace="~{fragments/topbar :: topBar('채팅방')}"></div>
+
+    <main class="container">
+
+      <!-- Chat messages -->
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <!-- Messages will be added here dynamically -->
+
+        </div>
+
+        <!-- Chat input -->
+        <div class="chat-input">
+          <input type="text" id="message" placeholder="Type a message...">
+          <button onclick="sendMessage()" class="send-button" id="send-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  let stompClient = null;
+  const nickname = [[${nickname}]];
+  const roomId = [[${roomId}]]
+
+  // Get DOM elements
+  const messageInput = document.getElementById('message');
+  const sendButton = document.getElementById('send-button');
+  const connectionStatus = document.getElementById('connection-status');
+  const connectionBanner = document.getElementById('connection-banner');
+
+  // 연결하면 채팅방 접속
+  document.addEventListener('DOMContentLoaded', function () {
+
+    const socket = new SockJS('/stomp'); // WebSocket 엔드포인트 (예: WebSocketConfig에서 설정한 엔드포인트)
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function () {
+
+      stompClient.subscribe(`/room/${roomId}`, function (message) {
+        const payload = JSON.parse(message.body);
+        addMessageToChat(payload);
+      });
+    });
+  });
+
+  function sendMessage() {
+    const message = messageInput.value;
+
+    const payload = {
+      nickname: nickname,
+      content: message
+    };
+
+    stompClient.send(`/send/${roomId}`, {}, JSON.stringify(payload));
+
+    // Clear input
+    messageInput.value = '';
+    messageInput.focus();
+  }
+
+  function addMessageToChat(payload) {
+    const chatMessages = document.getElementById('chat-messages');
+    const isCurrentUser = payload.nickname === nickname;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = isCurrentUser ? 'message sent' : 'message received';
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+
+    // Message text
+    const messagePara = document.createElement('p');
+    messagePara.textContent = payload.content;
+
+    // Sender name (only for received messages)
+    if (!isCurrentUser) {
+      const senderSpan = document.createElement('span');
+      senderSpan.className = 'message-sender';
+      senderSpan.textContent = payload.nickname;
+      contentDiv.appendChild(senderSpan);
+    }
+
+    // Time
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'message-time';
+
+    // Format timestamp
+    timeSpan.textContent = formatLocalDateTime(payload.createdAt);
+
+    contentDiv.appendChild(messagePara);
+    contentDiv.appendChild(timeSpan);
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function formatLocalDateTime(localDateTimeStr) {
+    const timestamp = new Date(localDateTimeStr.replace('T', ' '));
+
+    // 날짜 부분 포맷팅 (YYYY-MM-DD)
+    const year = timestamp.getFullYear();
+    const month = String(timestamp.getMonth() + 1).padStart(2, '0');
+    const day = String(timestamp.getDate()).padStart(2, '0');
+
+    // 시간 부분 포맷팅 (HH:MM)
+    const hours = String(timestamp.getHours()).padStart(2, '0');
+    const minutes = String(timestamp.getMinutes()).padStart(2, '0');
+
+    // 최종 포맷된 문자열 반환 (YYYY-MM-DD HH:MM)
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  }
+
+  // Handle Enter key in message input
+  messageInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+</script>
+</body>
+</html>
