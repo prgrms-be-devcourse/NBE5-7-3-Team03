@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email") // 파라미터를 email로 지정
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/groupPurchase", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
