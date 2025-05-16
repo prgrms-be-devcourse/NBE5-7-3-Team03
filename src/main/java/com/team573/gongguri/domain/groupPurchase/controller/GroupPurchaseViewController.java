@@ -30,5 +30,8 @@ public class GroupPurchaseViewController {
         return "groupPurchase/group-purchase-read";
     }
 
-
+    @GetMapping("/chats")
+    public String showChats() {
+        return "groupPurchase/group-purchase-chats";
+    }
 }

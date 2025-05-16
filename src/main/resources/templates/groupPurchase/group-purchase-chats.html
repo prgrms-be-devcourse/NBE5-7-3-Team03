@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Purchase Test</title>
+
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/groupPurchase/group-purchase-chat.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: mobileContainer}">
+  <div th:fragment="content">
+
+    <div th:replace="~{fragments/topbar :: topBar('채팅 목록')}"></div>
+
+    <main class="container">
+      <!-- 상태 필터 -->
+      <div class="status-filter">
+        <button class="filter-btn selected" data-status="ALL" onclick="filterStatus('ALL')">전체</button>
+        <button class="filter-btn" data-status="RECRUITING" onclick="filterStatus('RECRUITING')">진행중</button>
+        <button class="filter-btn" data-status="COMPLETED" onclick="filterStatus('COMPLETED')">완료</button>
+      </div>
+
+      <!-- 카드 리스트 -->
+      <div id="groupPurchaseList" class="purchase-list"></div>
+
+      <!-- 로딩 인디케이터 -->
+      <div id="loadingIndicator" class="loading-more" style="display: none;">로딩 중...</div>
+    </main>
+
+    <!-- ✅ Bottom Bar 유지 -->
+    <div th:replace="~{fragments/bottombar :: bottomNav('chat')}"></div>
+  </div>
+</div>
+
+<script>
+  function renderCard(item) {
+    const statusClass = item.progressStatus === 'OPEN' ? 'status-open' : 'status-done';
+
+    return `
+      <a href="/group-purchase/${item.id}/chat" class="purchase-card">
+        <img src="${item.imageUrl || 'https://via.placeholder.com/110x90'}" alt="item">
+        <div class="purchase-info">
+          <div class="purchase-header">
+            <span class="purchase-title">${item.title}</span>
+            <span><strong>${item.createAt ? new Date(item.createAt).toLocaleDateString() : ''}</strong></span>
+          </div>
+          <div class="purchase-message">${item.chatMessage || 'No message'}</div>
+          <div class="purchase-footer">
+            <span>👥 ${item.participantCount || 0}/${item.maxParticipants}</span>
+            <span class="status-badge ${statusClass}">${item.progressStatus}</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  // Global variables
+  let lastCursorId = null;
+  let currentStatus = 'ALL';
+  const pageSize = 10;
+  let isLoading = false;
+  let hasMoreData = true; // 더 로드할 데이터가 있는지 여부
+
+  // Fetch data from API
+  function fetchGroupPurchases(cursorId = null, status = 'ALL', size = 10) {
+    let url = '/api/group-purchases/chat?size=' + size;
+
+    if (cursorId) {
+      url += '&cursor=' + cursorId;
+    }
+
+    if (status !== 'ALL') {
+      url += '&progressStatus=' + status;
+    }
+
+    console.log('Fetching data from:', url);
+
+    return fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error fetching group purchases:', error);
+      return [];
+    });
+  }
+
+  // Load initial data
+  async function loadInitialData(status = 'ALL') {
+    if (isLoading) return;
+
+    hasMoreData = true;
+    lastCursorId = null;
+    isLoading = true;
+    currentStatus = status;
+
+    const list = document.getElementById('groupPurchaseList');
+    list.innerHTML = '<div class="loading">Loading...</div>';
+
+    try {
+      const data = await fetchGroupPurchases(null, status, pageSize);
+
+      if (data.length > 0) {
+        const cards = data.map(renderCard).join('');
+        list.innerHTML = cards;
+
+        // Update the cursor for pagination
+        lastCursorId = data[data.length - 1].id;
+
+        // 가져온 데이터가 pageSize보다 적으면 더 이상 데이터가 없는 것
+        hasMoreData = data.length >= pageSize;
+        console.log('Initial data loaded, hasMoreData:', hasMoreData);
+      } else {
+        list.innerHTML = '<div class="no-data">데이터가 없습니다.</div>';
+        hasMoreData = false;
+      }
+    } catch (error) {
+      console.error('Failed to load initial data:', error);
+      list.innerHTML = '<div class="error">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Load more data when scrolling
+  async function loadMoreData() {
+    if (isLoading || !hasMoreData) return;
+
+    isLoading = true;
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    loadingIndicator.style.display = 'block';
+
+    try {
+      const data = await fetchGroupPurchases(lastCursorId, currentStatus, pageSize);
+
+      if (data.length > 0) {
+        const list = document.getElementById('groupPurchaseList');
+        const newCards = data.map(renderCard).join('');
+        list.insertAdjacentHTML('beforeend', newCards);
+
+        // Update the cursor for next pagination
+        lastCursorId = data[data.length - 1].id;
+
+        // 가져온 데이터가 pageSize보다 적으면 더 이상 데이터가 없는 것
+        hasMoreData = data.length >= pageSize;
+        console.log('More data loaded, hasMoreData:', hasMoreData);
+      } else {
+        hasMoreData = false;
+        console.log('No more data available');
+      }
+    } catch (error) {
+      console.error('Failed to load more data:', error);
+    } finally {
+      isLoading = false;
+      loadingIndicator.style.display = 'none';
+    }
+  }
+
+  // Filter by status
+  function filterStatus(status) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('selected'));
+    document.querySelector(`.filter-btn[data-status="${status}"]`).classList.add('selected');
+
+    loadInitialData(status);
+  }
+
+  // Throttle function to limit how often a function can be called
+  function throttle(callback, delay = 300) {
+    let isThrottled = false;
+
+    return function() {
+      if (isThrottled) return;
+
+      isThrottled = true;
+      callback.apply(this, arguments);
+
+      setTimeout(() => {
+        isThrottled = false;
+      }, delay);
+    };
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadInitialData();
+
+    // Add scroll event listener for infinite scrolling with throttling
+    window.addEventListener('scroll', throttle(() => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // 스크롤이 문서 하단에 가까워지면 추가 데이터 로드
+      if (scrollTop + windowHeight >= documentHeight - 200) {
+        console.log('Near bottom of page, loading more data...');
+        loadMoreData();
+      }
+    }, 200));
+  });
+</script>
+
+</body>
+</html>

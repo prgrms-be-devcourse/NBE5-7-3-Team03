@@ -18,6 +18,19 @@
     <div th:replace="~{fragments/topbar :: topBar('채팅방')}"></div>
 
     <main class="container">
+      <a th:href="@{/groupPurchase/{id}/chat(id=${item.id})}" class="purchase-card">
+        <img th:src="${item.imageUrl} != null ? ${item.imageUrl} : 'https://via.placeholder.com/110x90'" alt="item">
+        <div class="purchase-info">
+          <div class="purchase-header">
+            <span class="purchase-title">${item.title}</span>
+            <span class="status-badge ${statusClass}">${item.progressStatus}</span>
+          </div>
+          <div class="purchase-footer">
+            <span>👥 ${item.currentParticipants || 0}/${item.maxParticipants}</span>
+            <span><strong>₩${item.price.toLocaleString()}</strong></span>
+          </div>
+        </div>
+      </a>
 
       <!-- Chat messages -->
       <div class="chat-container">

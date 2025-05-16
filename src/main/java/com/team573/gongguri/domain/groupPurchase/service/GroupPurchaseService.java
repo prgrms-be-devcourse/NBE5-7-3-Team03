@@ -2,23 +2,27 @@ package com.team573.gongguri.domain.groupPurchase.service;
 
 import com.team573.gongguri.domain.chat.entity.ChatRoom;
 import com.team573.gongguri.domain.chat.repository.ChatRoomRepository;
+import com.team573.gongguri.domain.chat.service.ChatService;
 import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseRequestDto;
 import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseResponseDto;
+import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseWithChatResponseDto;
+import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseWithParticipantCountDto;
 import com.team573.gongguri.domain.groupPurchase.entity.GroupPurchase;
 import com.team573.gongguri.domain.groupPurchase.entity.ProgressStatus;
 import com.team573.gongguri.domain.groupPurchase.mapper.GroupPurchaseMapper;
+import com.team573.gongguri.domain.groupPurchase.repository.GroupPurchaseJpqlRepository;
 import com.team573.gongguri.domain.groupPurchase.repository.GroupPurchaseRepository;
 import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.entity.Univ;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.global.exception.ErrorCode;
 import com.team573.gongguri.global.exception.ErrorException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,8 @@ public class GroupPurchaseService {
     private final GroupPurchaseRepository repository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatService chatService;
+    private final GroupPurchaseJpqlRepository groupPurchaseJpqlRepository;
 
     @Transactional
     public GroupPurchaseResponseDto add(GroupPurchaseRequestDto dto) {
@@ -35,7 +41,7 @@ public class GroupPurchaseService {
         Univ univ = writer.getUniv();
 
         ChatRoom chatRoom = chatRoomRepository.findById(1L)
-                .orElseThrow(() -> new ErrorException(ErrorCode.NOT_FOUND_CHATROOM));
+            .orElseThrow(() -> new ErrorException(ErrorCode.NOT_FOUND_CHATROOM));
 
         try {
 
@@ -93,5 +99,29 @@ public class GroupPurchaseService {
         } catch (Exception e) {
             throw new ErrorException(ErrorCode.DELETE_FAILED_GROUP_PURCHASE);
         }
+    }
+
+    public List<GroupPurchaseWithChatResponseDto> getWithMessage(
+        Integer size,
+        Long cursorId,
+        List<ProgressStatus> statuses,
+        Long memberId
+    ) {
+        // 공동 구매 조회
+        List<GroupPurchaseWithParticipantCountDto> groupPurchases
+            = groupPurchaseJpqlRepository.findWithCursorAndParticipantCount(cursorId, memberId, statuses, size);
+
+        // 조회한 공동 구매 채팅 메시지 조회
+        List<Long> chatRoomIds = groupPurchases.stream()
+            .map(GroupPurchaseWithParticipantCountDto::chatRoomId)
+            .toList();
+
+        // 맵으로 채팅 메시지 가져오기
+        Map<Long, String> firstMessages = chatService.getFirstMessageMap(chatRoomIds);
+
+        return groupPurchases.stream()
+            .map(groupPurchase -> GroupPurchaseMapper.toWithMessageResponseDto(groupPurchase,
+                firstMessages))
+            .toList();
     }
 }

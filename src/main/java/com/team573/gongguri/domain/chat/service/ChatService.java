@@ -2,8 +2,8 @@ package com.team573.gongguri.domain.chat.service;
 
 
 import static com.team573.gongguri.domain.chat.mapper.ChatMapper.toChatRoomParticipation;
-import static com.team573.gongguri.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static com.team573.gongguri.global.exception.ErrorCode.NOT_FOUND_CHATROOM;
+import static com.team573.gongguri.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 
 import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto;
 import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto;
@@ -14,10 +14,12 @@ import com.team573.gongguri.domain.chat.mapper.ChatMapper;
 import com.team573.gongguri.domain.chat.repository.ChatMessageRepository;
 import com.team573.gongguri.domain.chat.repository.ChatRoomParticipationRepository;
 import com.team573.gongguri.domain.chat.repository.ChatRoomRepository;
+import com.team573.gongguri.domain.chat.repository.CustomChatMessageRepository;
 import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.global.exception.ErrorException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -32,6 +34,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomParticipationRepository chatRoomParticipationRepository;
+    private final CustomChatMessageRepository customChatMessageRepository;
 
     // 채팅 메세지 저장
     public ChatMessageResponseDto addChatMessage(
@@ -98,5 +101,9 @@ public class ChatService {
         return messages.stream()
             .map(ChatMapper::toChatMessageResponseDto)
             .collect(Collectors.toList());
+    }
+
+    public Map<Long, String> getFirstMessageMap(List<Long> chatRoomIds) {
+        return customChatMessageRepository.findLatestMessageByRoomIds(chatRoomIds);
     }
 }
