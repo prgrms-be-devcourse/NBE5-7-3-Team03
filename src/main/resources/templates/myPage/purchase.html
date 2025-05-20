@@ -1,50 +1,61 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>거래내역</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="stylesheet" th:href="@{/css/myPage/mypage_common.css}">
-    <link rel="stylesheet" th:href="@{/css/myPage/mypage_purchase_common.css}">
+  <meta charset="UTF-8">
+  <title>거래내역</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/myPage/mypage_common.css}">
+  <link rel="stylesheet" th:href="@{/css/myPage/mypage_purchase_common.css}">
 </head>
 <body>
 
 <div th:replace="~{fragments/layout :: mobileContainer}">
-    <div th:fragment="content">
+  <div th:fragment="content">
 
-        <!-- Top bar -->
-        <div th:replace="~{fragments/topbar :: topBar('거래내역')}"></div>
+    <!-- Top bar -->
+    <div th:replace="~{fragments/topbar :: topBar('거래내역')}"></div>
 
-        <main class="container">
-            <br>
-            <!-- 참여한 거래 목록 -->
-            <div class="purchase-list">
-                <a th:each="item : ${participatedList}"
-                   th:href="@{|/group-purchase/${item.id}|}"
-                   class="purchase-card">
+    <main class="container">
+      <br>
+      <!-- 참여한 거래 목록 -->
+      <div class="purchase-list">
+        <a th:each="item : ${participatedList}"
+           th:href="@{|/group-purchase/${item.id}|}"
+           class="purchase-card">
 
-                    <img th:src="${item.imageUrl != null} ? ${item.imageUrl} : 'https://via.placeholder.com/110x90'"
-                         alt="item" class="purchase-img">
+          <img
+              th:src="${item.imageUrl != null} ? ${item.imageUrl} : 'https://via.placeholder.com/110x90'"
+              alt="item" class="purchase-img">
 
-                    <div class="purchase-info">
-                        <div class="purchase-header">
-                            <div class="purchase-title" th:text="${item.title}">제목</div>
-                            <span class="status-badge status-done">완료</span>
-                        </div>
+          <div class="purchase-info">
+            <div class="purchase-header">
+              <div class="purchase-title" th:text="${item.title}">제목</div>
 
-                        <div class="purchase-footer">
-                            <span th:text="'👥 ' + ${item.currentParticipants} + '/' + ${item.maxParticipants}"></span>
-                            <span><strong th:text="'₩' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}"></strong></span>
-                        </div>
-                    </div>
-                </a>
+              <div th:if="${item.isReviewed}">
+                <span class="review-button review-completed">리뷰 완료</span>
+              </div>
+              <div th:unless="${item.isReviewed}">
+                <span class="review-button review-needed"
+                      th:data-review-id="${item.id}"
+                      th:onclick="event.preventDefault(); event.stopPropagation(); window.location.href = '/group-purchase/' + [[${item.id}]] + '/review'">리뷰 남기기</span>
+              </div>
             </div>
-        </main>
 
-        <!-- Bottom bar -->
-        <div th:replace="~{fragments/bottombar :: bottomNav('myPage')}"></div>
+            <div class="purchase-footer">
+              <span
+                  th:text="'👥 ' + ${item.participantCount} + '/' + ${item.maxParticipants}"></span>
+              <span><strong
+                  th:text="'₩' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}"></strong></span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </main>
 
-    </div>
+    <!-- Bottom bar -->
+    <div th:replace="~{fragments/bottombar :: bottomNav('myPage')}"></div>
+
+  </div>
 </div>
 
 </body>

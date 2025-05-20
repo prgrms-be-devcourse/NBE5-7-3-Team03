@@ -129,5 +129,20 @@ public class GroupPurchaseMapper {
     }
 
 
+    public static GroupPurchaseWithReviewedResponseDto toDtoWithReviewed(
+        GroupPurchase groupPurchase,
+        Long participantCount,
+        Boolean isReviewed
+    ) {
+        return GroupPurchaseWithReviewedResponseDto.builder()
+            .id(groupPurchase.getGroupId())
+            .title(groupPurchase.getTitle())
+            .maxParticipants(groupPurchase.getMaxParticipants())
+            .participantCount(participantCount)
+            .isReviewed(isReviewed)
+            .imageUrl(groupPurchase.getImageUrl())
+            .price(groupPurchase.getPrice())
+            .build();
+    }
 }
 

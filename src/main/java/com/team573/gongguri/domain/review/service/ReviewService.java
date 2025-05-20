@@ -10,6 +10,7 @@ import com.team573.gongguri.domain.review.mapper.ReviewMapper;
 import com.team573.gongguri.domain.review.repository.ReviewRepository;
 import com.team573.gongguri.global.exception.CustomErrorCode;
 import com.team573.gongguri.global.exception.CustomException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final GroupPurchaseRepository groupPurchaseRepository;
 
+    @Transactional
     public Long addReview(Long groupPurchaseId, Long memberId, Boolean like) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));

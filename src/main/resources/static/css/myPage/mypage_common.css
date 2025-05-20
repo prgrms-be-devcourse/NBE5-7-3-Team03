@@ -212,3 +212,15 @@
     background-color: #e3eafc;
     color: #1a237e;
 }
+
+.like-info {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #1E90FF;
+}
+
+.like-info span {
+    display: inline-block;
+    margin: 0 8px;
+}

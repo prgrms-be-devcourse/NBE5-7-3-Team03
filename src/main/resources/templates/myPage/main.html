@@ -17,6 +17,10 @@
                 <div class="profile-left">
                     <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="profile-img" alt="프로필"/>
                     <span class="nickname" th:text="${nickname}">닉네임</span>
+                    <div class="like-info">
+                        <span class="like-count">👍🏻 좋아요: <span th:text="${likeCount}">0</span></span>
+                        <span class="dislike-count">👎🏻 싫어요: <span th:text="${dislikeCount}">0</span></span>
+                    </div>
                 </div>
                 <div class="profile-right">
                     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24">

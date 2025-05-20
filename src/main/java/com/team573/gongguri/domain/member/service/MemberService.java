@@ -1,6 +1,7 @@
 package com.team573.gongguri.domain.member.service;
 
 import com.team573.gongguri.domain.member.dto.JoinRequestDto;
+import com.team573.gongguri.domain.member.dto.LikeInfoDto;
 import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.entity.Univ;
 import com.team573.gongguri.domain.member.mapper.MemberMapper;
@@ -59,5 +60,9 @@ public class MemberService {
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));
+    }
+    public LikeInfoDto getLikeInfo(Long memberId) {
+        Member member = getMemberById(memberId);
+        return new LikeInfoDto(member.getLikeCount(), member.getDislikeCount());
     }
 }

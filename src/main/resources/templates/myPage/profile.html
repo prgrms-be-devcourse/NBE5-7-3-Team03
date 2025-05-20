@@ -21,6 +21,10 @@
                 <div class="profile-box">
                     <img class="profile-picture" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="프로필 이미지">
                     <span class="profile-nickname" th:text="${nickname}">닉네임</span>
+                    <div class="like-info">
+                        <span class="like-count">👍🏻 좋아요: <span th:text="${likeCount}">0</span></span>
+                        <span class="dislike-count">👎🏻 싫어요: <span th:text="${dislikeCount}">0</span></span>
+                    </div>
                 </div>
             </section>
 
