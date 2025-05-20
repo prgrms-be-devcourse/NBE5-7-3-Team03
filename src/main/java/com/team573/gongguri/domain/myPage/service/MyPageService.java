@@ -1,12 +1,14 @@
 package com.team573.gongguri.domain.myPage.service;
 
-import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseFindCreatedResponseDto;
-import com.team573.gongguri.domain.groupPurchase.entity.GroupPurchase;
+
+import com.team573.gongguri.domain.groupPurchase.dto.GroupPurchaseListResponseDto;
 import com.team573.gongguri.domain.groupPurchase.entity.GroupPurchaseParticipant;
 import com.team573.gongguri.domain.groupPurchase.entity.ProgressStatus;
 import com.team573.gongguri.domain.groupPurchase.mapper.GroupPurchaseMapper;
 import com.team573.gongguri.domain.groupPurchase.repository.GroupPurchaseParticipantRepository;
-import com.team573.gongguri.domain.groupPurchase.repository.GroupPurchaseRepository;
+import com.team573.gongguri.domain.member.repository.MemberRepository;
+import com.team573.gongguri.global.exception.CustomErrorCode;
+import com.team573.gongguri.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,12 @@ import java.util.List;
 public class MyPageService {
 
     private final GroupPurchaseParticipantRepository groupPurchaseParticipantRepository;
+    private final MemberRepository memberRepository;
 
     // 내가 참여한 공구글
-    public List<GroupPurchaseFindCreatedResponseDto> findMyParticipatedPurchases(Long memberId){
+    public List<GroupPurchaseListResponseDto> findMyParticipatedPurchases(Long memberId){
+
+        memberRepository.findById(memberId).orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));
 
         // '본인이 참여했으며, 연관된 공구가 완료된' 공구 참여자 entity 조회
         List<GroupPurchaseParticipant> participants =
@@ -31,7 +36,7 @@ public class MyPageService {
                 .map(GroupPurchaseParticipant::getGroupPurchase)
                 .map(purchase -> {
                     int currentParticipants = groupPurchaseParticipantRepository.countByGroupPurchase_GroupId(purchase.getGroupId());
-                    return GroupPurchaseMapper.toFindCreatedDto(purchase, currentParticipants);
+                    return GroupPurchaseMapper.toListDto(purchase, currentParticipants);
                 })
                 .toList();
     }

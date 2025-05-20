@@ -172,7 +172,7 @@ public class GroupPurchaseService {
         Long memberId
     ) {
         // 필터로 공동 구매 상태 구하기
-        List<ProgressStatus> statuses = getStatusesByFilter(purchaseFilter);
+        List<ProgressStatus> statuses = purchaseFilter.toStatuses();
 
         PageRequest pageable = PageRequest.of(0, size);
 
@@ -191,15 +191,6 @@ public class GroupPurchaseService {
                 )
             )
             .toList();
-    }
-
-    // 상태 조건 분리
-    private List<ProgressStatus> getStatusesByFilter(PurchaseFilter filter) {
-        return switch (filter) {
-            case ONGOING -> List.of(ProgressStatus.RECRUITING, ProgressStatus.CLOSED);
-            case COMPLETED -> List.of(ProgressStatus.COMPLETED);
-            default -> List.of(ProgressStatus.RECRUITING, ProgressStatus.CLOSED, ProgressStatus.COMPLETED);
-        };
     }
 
     // 조회한 공동 구매 채팅 메시지 조회
@@ -230,26 +221,25 @@ public class GroupPurchaseService {
     }
 
     //특정 멤버가 작성한 공동구매글 조회
-    public List<GroupPurchaseFindCreatedResponseDto> findCreatedPurchases(Long memberId, PurchaseFilter purchaseFilter){
+    public List<GroupPurchaseListResponseDto> findCreatedPurchases(Long memberId, PurchaseFilter purchaseFilter){
+
+        memberRepository.findById(memberId).orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));
+
 
         List<GroupPurchase> purchases;
-        switch (purchaseFilter) {
-            case ONGOING -> {
-                List<ProgressStatus> statuses = List.of(ProgressStatus.RECRUITING, ProgressStatus.CLOSED);
-                purchases = groupPurchaseRepository.findByMember_MemberIdAndProgressStatusIn(memberId, statuses);
-            }
-            case COMPLETED -> {
-                purchases = groupPurchaseRepository.findByMember_MemberIdAndProgressStatus(memberId, ProgressStatus.COMPLETED);
-            }
-            default -> {
-                purchases = groupPurchaseRepository.findByMember_MemberId(memberId);
-            }
+        List<ProgressStatus> statuses = purchaseFilter.toStatuses();
+
+        if (statuses.size() == ProgressStatus.values().length) {
+            purchases = groupPurchaseRepository.findByMember_MemberId(memberId);
+        } else {
+            purchases = groupPurchaseRepository.findByMember_MemberIdAndProgressStatusIn(memberId, statuses);
         }
 
         return purchases.stream()
                 .map(purchase -> {
-                    int currentParticipants = countParticipantsByStatus(purchase, ParticipationStatus.JOINED).intValue();
-                    return GroupPurchaseMapper.toFindCreatedDto(purchase, currentParticipants);
+                    int currentParticipants = participantRepository.countByGroupPurchase_GroupId(purchase.getGroupId());
+                    return GroupPurchaseMapper.toListDto(purchase, currentParticipants);
+
                 })
                 .toList();
     }
