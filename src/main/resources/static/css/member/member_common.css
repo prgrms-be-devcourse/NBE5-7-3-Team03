@@ -96,7 +96,6 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
 }
 
 .row input {
@@ -137,4 +136,7 @@ body {
     text-align: center;
 }
 
-
+.check-result {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}

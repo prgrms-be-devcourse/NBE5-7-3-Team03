@@ -5,5 +5,5 @@ public record JoinRequestDto(
         String nickname,
         String password,
         String univName,
-        boolean verified
+        Boolean verified
 ) {}

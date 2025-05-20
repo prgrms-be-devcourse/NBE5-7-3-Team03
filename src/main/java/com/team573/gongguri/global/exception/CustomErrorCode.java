@@ -37,9 +37,13 @@ public enum CustomErrorCode {
 
     // AUTH
     FAILED_AUTHENTICATION(UNAUTHORIZED, "AUTH-01", "사용자 인증에 실패했습니다."),
+    LOGIN_FAILED(UNAUTHORIZED, "AUTH-02", "아이디 또는 비밀번호가 올바르지 않습니다."),
 
     // MEMBER
     NOT_FOUND_MEMBER(NOT_FOUND, "MEMBER-001", "존재하지 않는 회원입니다."),
+    EMAIL_ALREADY_EXISTS(CONFLICT, "MEMBER-002", "이미 사용 중인 이메일입니다."),
+    NICKNAME_ALREADY_EXISTS(CONFLICT, "MEMBER-003", "이미 사용 중인 닉네임입니다."),
+    EMAIL_NOT_VERIFIED(BAD_REQUEST, "MEMBER-004", "이메일 인증이 완료되지 않았습니다."),
 
     // CHAT
     NOT_FOUND_CHATROOM(NOT_FOUND, "CHAT-001", "존재하지 않는 채팅방입니다."),

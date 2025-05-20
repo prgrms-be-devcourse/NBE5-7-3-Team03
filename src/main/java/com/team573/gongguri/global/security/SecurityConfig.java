@@ -20,7 +20,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/join","/send-verification-code", "/verify-email-code", "/clear-cert").anonymous()
+                        .requestMatchers("/login", "/join","/send-verification-code", "/verify-email-code", "/clear-cert", "/api/member/**").anonymous()
                         .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("email") // 파라미터를 email로 지정
                         .defaultSuccessUrl("/group-purchase", true)
+                        .failureHandler(customLoginFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -43,5 +44,9 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    @Bean
+    public CustomLoginFailureHandler customLoginFailureHandler() {
+        return new CustomLoginFailureHandler();
     }
 }

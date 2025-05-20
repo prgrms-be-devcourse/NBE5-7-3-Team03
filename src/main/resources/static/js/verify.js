@@ -63,3 +63,54 @@ function verifyEmailCode() {
             alert("코드 검증 중 오류가 발생했습니다.");
         });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.getElementById("email");
+    const emailBtn = document.getElementById("check-email-btn");
+    const emailResult = document.getElementById("email-check-result");
+
+    const nicknameInput = document.getElementById("nickname");
+    const nicknameBtn = document.getElementById("check-nickname-btn");
+    const nicknameResult = document.getElementById("nickname-check-result");
+
+    emailBtn.addEventListener("click", function () {
+        const email = emailInput.value.trim();
+        if (!email) {
+            emailResult.textContent = "이메일을 입력해주세요.";
+            emailResult.style.color = "red";
+            return;
+        }
+
+        fetch(`/api/member/check-email?email=${encodeURIComponent(email)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    emailResult.textContent = "이미 사용 중인 이메일입니다.";
+                    emailResult.style.color = "red";
+                } else {
+                    emailResult.textContent = "사용 가능한 이메일입니다.";
+                    emailResult.style.color = "green";
+                }
+            });
+    });
+
+    nicknameBtn.addEventListener("click", function () {
+        const nickname = nicknameInput.value.trim();
+        if (!nickname) {
+            nicknameResult.textContent = "닉네임을 입력해주세요.";
+            nicknameResult.style.color = "red";
+            return;
+        }
+
+        fetch(`/api/member/check-nickname?nickname=${encodeURIComponent(nickname)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    nicknameResult.textContent = "이미 사용 중인 닉네임입니다.";
+                    nicknameResult.style.color = "red";
+                } else {
+                    nicknameResult.textContent = "사용 가능한 닉네임입니다.";
+                    nicknameResult.style.color = "green";
+                }
+            });
+    });
+});
