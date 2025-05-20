@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>거래 후기</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/review/review-style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: mobileContainer}">
+  <main th:fragment="content">
+    <div th:replace="~{fragments/topbar :: topBar('리뷰 남기기')}"></div>
+
+    <!-- 컨텐츠 -->
+    <main class="container">
+      <div class="content">
+        <div class="question">
+          <div th:text="${simpleInfo.title()}"></div>
+          거래는 어땠나요?
+        </div>
+
+        <div class="rating-container">
+          <!-- 좋아요 버튼 -->
+          <button class="rating-button" id="thumbs-up">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#3376ff"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+              <path
+                  d="M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3"/>
+            </svg>
+
+          </button>
+
+          <!-- 싫어요 버튼 -->
+          <button class="rating-button" id="thumbs-down">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#3376ff"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+              <path
+                  d="M7 13v-8a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v7a1 1 0 0 0 1 1h3a4 4 0 0 1 4 4v1a2 2 0 0 0 4 0v-5h3a2 2 0 0 0 2 -2l-1 -5a2 3 0 0 0 -2 -2h-7a3 3 0 0 0 -3 3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <div class="footer">
+      <button class="submit-button">후기 남기기</button>
+    </div>
+
+  </main>
+</div>
+
+<script th:inline="javascript">
+  const groupPurchaseId = [[${simpleInfo.id}]]
+  // 평가 버튼 선택 기능
+  const thumbsUp = document.getElementById('thumbs-up');
+  const thumbsDown = document.getElementById('thumbs-down');
+  const submitButton = document.querySelector('.submit-button');
+
+  let selectedRating = null;
+
+  thumbsUp.addEventListener('click', () => {
+    thumbsUp.classList.add('selected');
+    thumbsDown.classList.remove('selected');
+    selectedRating = 'positive';
+  });
+
+  thumbsDown.addEventListener('click', () => {
+    thumbsDown.classList.add('selected');
+    thumbsUp.classList.remove('selected');
+    selectedRating = 'negative';
+  });
+
+  submitButton.addEventListener('click', () => {
+    if (selectedRating) {
+      alert(`평가를 남겨주셔서 감사합니다!`);
+
+      fetch(`/api/group-purchases/${groupPurchaseId}/review`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `like=${selectedRating === 'positive'}`
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("리뷰 등록 실패");
+        return response.json();
+      })
+      .then(reviewId => {
+        console.log("리뷰 ID:", reviewId);
+        window.location.href = "/my-page/purchase";
+        // 성공 후 이동 또는 메시지 출력 등
+      })
+      .catch(err => {
+        console.error(err);
+        alert("리뷰 제출 중 오류가 발생했습니다.");
+      });
+    } else {
+      alert('평가를 선택해주세요.');
+    }
+  });
+
+</script>
+</body>
+</html>

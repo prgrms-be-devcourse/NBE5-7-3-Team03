@@ -45,5 +45,11 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private int dislikeCount;
 
-
+    public void updateLikeCount(Boolean like) {
+        if (like) {
+            this.likeCount += 1;
+        } else {
+            this.dislikeCount += 1;
+        }
+    }
 }

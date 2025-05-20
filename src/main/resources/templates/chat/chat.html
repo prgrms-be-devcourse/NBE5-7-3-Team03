@@ -23,10 +23,10 @@
           <div class="purchase-header">
             <span class="purchase-title" th:text="${groupPurchase.title}"></span>
             <span class="status-badge"
-                  th:text="${groupPurchase.progressStatus == 'RECRUITING' ? '진행중'
-                          : (groupPurchase.progressStatus == 'CLOSED' ? '모집마감' : '완료')}"
-                  th:classappend="| ${groupPurchase.progressStatus == 'RECRUITING' ? 'status-open'
-                          : (groupPurchase.progressStatus == 'CLOSED' ? 'status-closed' : 'status-done')} |">
+                  th:text="${groupPurchase.progressStatus.name() == 'RECRUITING' ? '진행중'
+                          : (groupPurchase.progressStatus.name() == 'CLOSED' ? '모집마감' : '완료')}"
+                  th:classappend="| ${groupPurchase.progressStatus.name() == 'RECRUITING' ? 'status-open'
+                          : (groupPurchase.progressStatus.name() == 'CLOSED' ? 'status-closed' : 'status-done')} |">
                             </span>
           </div>
           <div class="purchase-footer">

@@ -31,6 +31,7 @@ public enum CustomErrorCode {
     PARTICIPANT_LIMIT_REACHED(BAD_REQUEST, "PARTICIPANT-003", "모집 인원이 모두 찼습니다."),
     NOT_FOUND_PARTICIPANT(NOT_FOUND, "PARTICIPANT-004", "존재하지 않는 공동 구매 참가자입니다."),
     CANNOT_CANCEL_PAID_PARTICIPANT(FORBIDDEN, "PARTICIPANT-005", "이미 입금한 사용자는 강퇴할 수 없습니다."),
+    IS_NOT_COMPLETED(BAD_REQUEST, "PARTICIPANT-006", "완료된 공동 구매가 아닙니다."),
 
     // COMMON
     INVALID_REQUEST(BAD_REQUEST, "COMMON-001", "잘못된 요청입니다."),
