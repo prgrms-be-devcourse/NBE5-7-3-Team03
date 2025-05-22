@@ -1,5 +1,5 @@
 .profile-area {
-    margin-top: 0;
+    margin-top: 1rem;
     display: flex;
     justify-content: center;
 }
@@ -62,27 +62,4 @@
 .review-completed {
     background-color: #aaa;
     cursor: not-allowed;
-}
-
-/* 추가 스타일 */
-.content-wrapper {
-    padding-top: 160px; /* 고정된 헤더의 높이만큼 여백 추가 */
-}
-
-.profile-header-fixed {
-    position: fixed;
-    top: 60px; /* 상단바 높이 고려 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: var(--mobile-width);
-    background-color: white;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    padding: 1rem 1rem 0.5rem 1rem;
-}
-
-.container {
-    padding-top: 430px; /* 고정된 헤더의 높이에 맞게 조정 */
-    padding-bottom: 70px; /* 하단 네비게이션 바 고려 */
 }
