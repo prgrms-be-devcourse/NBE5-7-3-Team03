@@ -45,8 +45,8 @@ public class ProfileViewController {
 
         // 뷰에 상태와 리스트 전달
         LikeInfoDto likeInfo = memberService.getLikeInfo(memberId);
-        model.addAttribute("likeCount", likeInfo.likeCount());
-        model.addAttribute("dislikeCount", likeInfo.dislikeCount());
+        model.addAttribute("likeCount", likeInfo.getLikeCount());
+        model.addAttribute("dislikeCount", likeInfo.getDislikeCount());
         model.addAttribute("status", status.name());
         model.addAttribute("createdList", createdList);
 

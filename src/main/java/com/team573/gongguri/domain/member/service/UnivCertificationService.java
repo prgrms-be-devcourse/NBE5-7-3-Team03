@@ -14,7 +14,7 @@ public class UnivCertificationService {
 
     // 인증 코드 발송 메서드
     public Map<String, Object> sendVerificationCode(String email, String universityName) throws IOException {
-        return UnivCert.certify(API_KEY, email, universityName, false);
+        return UnivCert.certify(API_KEY, email, universityName, false); // univ_check: 실존 대학 체크 (false: 개발용)
     }
 
     // 인증 코드 검증
