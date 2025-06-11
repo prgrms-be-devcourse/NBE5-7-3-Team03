@@ -1,32 +1,35 @@
-package com.team573.gongguri.domain.chat.entity;
+package com.team573.gongguri.domain.chat.entity
 
-import com.team573.gongguri.global.entity.BaseEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.team573.gongguri.global.entity.BaseEntity
+import jakarta.persistence.EntityListeners
+import lombok.Builder
+import lombok.Getter
+import lombok.NoArgsConstructor
+import org.bson.types.ObjectId
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.Field
+import java.time.LocalDateTime
+
 
 @Document(collection = "chat_message")
-@Getter
-@NoArgsConstructor
-public class ChatMessage extends BaseEntity {
+class ChatMessage (
     @Id
-    private ObjectId id;
+    val id: ObjectId? = null,
 
-    private String nickname;
-
-    private String content;
+    var content: String,
 
     @Field("room_id")
-    private Long roomId;
+    var roomId: Long,
 
-    @Builder
-    public ChatMessage(String content, Long roomId, String nickname) {
-        this.content = content;
-        this.roomId = roomId;
-        this.nickname = nickname;
-    }
+    var nickname: String,
+) {
+    @CreatedDate
+    var createdAt: LocalDateTime? = null
+
+    @LastModifiedDate
+    var updatedAt: LocalDateTime? = null
 }
