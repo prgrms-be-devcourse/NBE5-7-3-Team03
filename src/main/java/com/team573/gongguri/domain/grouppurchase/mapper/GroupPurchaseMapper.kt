@@ -1,142 +1,140 @@
-package com.team573.gongguri.domain.grouppurchase.mapper;
+package com.team573.gongguri.domain.grouppurchase.mapper
 
-import com.team573.gongguri.domain.chat.entity.ChatRoom;
-import com.team573.gongguri.domain.grouppurchase.dto.*;
-import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase;
-import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchaseParticipant;
-import com.team573.gongguri.domain.member.entity.Member;
-import com.team573.gongguri.domain.member.entity.Univ;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.team573.gongguri.domain.chat.entity.ChatRoom
+import com.team573.gongguri.domain.grouppurchase.dto.*
+import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase
+import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchaseParticipant
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.domain.member.entity.Univ
 
-import java.util.Map;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GroupPurchaseMapper {
-    public static GroupPurchase toEntity(GroupPurchaseRequestDto dto, Member writer, ChatRoom chatRoom, Univ univ) {
-        return GroupPurchase.builder()
-                .member(writer)
-                .chatRoom(chatRoom)
-                .univ(univ)
-                .title(dto.title())
-                .content(dto.content())
-                .price(dto.price())
-                .maxParticipants(dto.maxParticipants())
-                .bank(dto.bank())
-                .account(dto.account())
-                .imageUrl(dto.imageUrl()) // 추가!
-                .progressStatus(ProgressStatus.RECRUITING)
-                .build();
-    }
-
-    public static GroupPurchaseCreateResponseDto toCreateDto(GroupPurchase entity) {
-        return GroupPurchaseCreateResponseDto.builder()
-                .id(entity.getGroupId())
-                .title(entity.getTitle())
-                .progressStatus(entity.getProgressStatus().toString())
-                .imageUrl(entity.getImageUrl())
-                .build();
-    }
-
-    public static GroupPurchaseUpdateResponseDto toUpdateDto(GroupPurchase entity) {
-        return GroupPurchaseUpdateResponseDto.builder()
-                .id(entity.getGroupId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .price(entity.getPrice())
-                .maxParticipants(entity.getMaxParticipants())
-                .progressStatus(entity.getProgressStatus().toString())
-                .imageUrl(entity.getImageUrl())
-                .build();
-    }
-    public static GroupPurchaseDetailResponseDto toDetailDto(GroupPurchase entity, Long currentParticipants, boolean isParticipated) {
-        return GroupPurchaseDetailResponseDto.builder()
-                .id(entity.getGroupId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .price(entity.getPrice())
-                .maxParticipants(entity.getMaxParticipants())
-                .currentParticipants(currentParticipants)
-                .bank(entity.getBank())
-                .account(entity.getAccount())
-                .progressStatus(entity.getProgressStatus().toString())
-                .imageUrl(entity.getImageUrl())
-                .isParticipated(isParticipated)
-                .writerEmail(entity.getMember().getEmail())
-                .writerNickname(entity.getMember().getNickname())
-                .writerId(entity.getMember().getMemberId())
-                .build();
-    }
-
-    public static GroupPurchaseWithChatResponseDto toDtoWithMessage(
-        GroupPurchaseParticipant groupPurchaseParticipant,
-        Long participantCount,
-        Map<Long, String> firstMessages
-    ) {
-        return GroupPurchaseWithChatResponseDto.builder()
-            .id(groupPurchaseParticipant.getGroupPurchase().getGroupId())
-            .participantId(groupPurchaseParticipant.getGroupParticipantId())
-            .title(groupPurchaseParticipant.getGroupPurchase().getTitle())
-            .maxParticipants(groupPurchaseParticipant.getGroupPurchase().getMaxParticipants())
-            .progressStatus(groupPurchaseParticipant.getGroupPurchase().getProgressStatus().toString())
-            .imageUrl(groupPurchaseParticipant.getGroupPurchase().getImageUrl())
-            .chatMessage(firstMessages.get(groupPurchaseParticipant.getGroupPurchase().getChatRoom().getChatRoomId()))
-            .participantCount(participantCount)
-            .createAt(groupPurchaseParticipant.getCreatedAt())
-            .build();
-    }
-
-    public static GroupPurchaseListResponseDto toListDto(GroupPurchaseWithParticipantCountDto dto) {
-        return GroupPurchaseListResponseDto.builder()
-                .id(dto.groupId())
-                .title(dto.title())
-                .price(dto.price())
-                .maxParticipants(dto.maxParticipants())
-                .currentParticipants(dto.participantCount())
-                .progressStatus(dto.progressStatus().toString())
-                .imageUrl(dto.imageUrl())
-                .build();
-    }
-
-    public static GroupPurchaseSimpleResponseDto toDtoWithCount(GroupPurchase groupPurchase, Long participantCount) {
-        return GroupPurchaseSimpleResponseDto.builder()
-            .id(groupPurchase.getGroupId())
-            .title(groupPurchase.getTitle())
-            .maxParticipants(groupPurchase.getMaxParticipants())
-            .participantCount(participantCount)
-            .progressStatus(groupPurchase.getProgressStatus())
-            .imageUrl(groupPurchase.getImageUrl())
-            .price(groupPurchase.getPrice())
-            .build();
-    }
-
-    public static GroupPurchaseListResponseDto toListDto(GroupPurchase purchase, Long currentParticipants) {
-        return GroupPurchaseListResponseDto.builder()
-                .id(purchase.getGroupId())
-                .title(purchase.getTitle())
-                .price(purchase.getPrice())
-                .progressStatus(purchase.getProgressStatus().name())
-                .currentParticipants(currentParticipants)
-                .maxParticipants(purchase.getMaxParticipants())
-                .imageUrl(purchase.getImageUrl()) // 없으면 null 처리
-                .build();
-    }
-
-    public static GroupPurchaseWithReviewedResponseDto toDtoWithReviewed(
-        GroupPurchase groupPurchase,
-        Long participantCount,
-        Boolean isReviewed
-    ) {
-        return GroupPurchaseWithReviewedResponseDto.builder()
-            .id(groupPurchase.getGroupId())
-            .title(groupPurchase.getTitle())
-            .maxParticipants(groupPurchase.getMaxParticipants())
-            .participantCount(participantCount)
-            .isReviewed(isReviewed)
-            .imageUrl(groupPurchase.getImageUrl())
-            .price(groupPurchase.getPrice())
-            .build();
-    }
+fun toEntity(dto: GroupPurchaseRequestDto, writer: Member, chatRoom: ChatRoom, univ: Univ): GroupPurchase {
+    return GroupPurchase(
+        member = writer,
+        chatRoom = chatRoom,
+        univ = univ,
+        title = dto.title,
+        content = dto.content,
+        price = dto.price,
+        maxParticipants = dto.maxParticipants,
+        bank = dto.bank,
+        account = dto.account,
+        imageUrl = dto.imageUrl,
+        progressStatus = ProgressStatus.RECRUITING
+    )
 }
 
+fun toCreateDto(entity: GroupPurchase): GroupPurchaseCreateResponseDto {
+    return GroupPurchaseCreateResponseDto(
+        id = entity.groupId!!,
+        title = entity.title,
+        progressStatus = entity.progressStatus.toString(),
+        imageUrl = entity.imageUrl
+    )
+}
+
+fun toUpdateDto(entity: GroupPurchase): GroupPurchaseUpdateResponseDto {
+    return GroupPurchaseUpdateResponseDto(
+        id = entity.groupId!!,
+        title = entity.title,
+        content = entity.content,
+        price = entity.price,
+        maxParticipants = entity.maxParticipants,
+        progressStatus = entity.progressStatus.toString(),
+        imageUrl = entity.imageUrl
+    )
+}
+
+fun toDetailDto(
+    entity: GroupPurchase,
+    currentParticipants: Long,
+    isParticipated: Boolean
+): GroupPurchaseDetailResponseDto {
+    return GroupPurchaseDetailResponseDto(
+        id = entity.groupId!!,
+        title = entity.title,
+        content = entity.content,
+        price = entity.price,
+        maxParticipants = entity.maxParticipants,
+        currentParticipants = currentParticipants,
+        bank = entity.bank,
+        account = entity.account,
+        progressStatus = entity.progressStatus.toString(),
+        imageUrl = entity.imageUrl,
+        isParticipated = isParticipated,
+        writerEmail = entity.member.email,
+        writerNickname = entity.member.nickname,
+        writerId = entity.member.memberId!!
+    )
+}
+
+fun toDtoWithMessage(
+    groupPurchaseParticipant: GroupPurchaseParticipant,
+    participantCount: Long,
+    firstMessages: Map<Long, String>
+): GroupPurchaseWithChatResponseDto {
+    val purchase = groupPurchaseParticipant.groupPurchase
+    return GroupPurchaseWithChatResponseDto(
+        id = purchase.groupId!!,
+        participantId = groupPurchaseParticipant.groupParticipantId!!,
+        title = purchase.title,
+        maxParticipants = purchase.maxParticipants,
+        progressStatus = purchase.progressStatus.toString(),
+        imageUrl = purchase.imageUrl,
+        chatMessage = firstMessages[purchase.chatRoom.chatRoomId],
+        participantCount = participantCount,
+        createAt = groupPurchaseParticipant.createdAt
+    )
+}
+
+fun toListDto(dto: GroupPurchaseWithParticipantCountDto): GroupPurchaseListResponseDto {
+    return GroupPurchaseListResponseDto(
+        id = dto.groupId,
+        title = dto.title,
+        price = dto.price,
+        maxParticipants = dto.maxParticipants,
+        currentParticipants = dto.participantCount,
+        progressStatus = dto.progressStatus.toString(),
+        imageUrl = dto.imageUrl
+    )
+}
+
+fun toDtoWithCount(groupPurchase: GroupPurchase, participantCount: Long): GroupPurchaseSimpleResponseDto {
+    return GroupPurchaseSimpleResponseDto(
+        id = groupPurchase.groupId!!,
+        title = groupPurchase.title,
+        maxParticipants = groupPurchase.maxParticipants,
+        participantCount = participantCount,
+        progressStatus = groupPurchase.progressStatus,
+        imageUrl = groupPurchase.imageUrl,
+        price = groupPurchase.price
+    )
+}
+
+fun toListDto(purchase: GroupPurchase, currentParticipants: Long): GroupPurchaseListResponseDto {
+    return GroupPurchaseListResponseDto(
+        id = purchase.groupId!!,
+        title = purchase.title,
+        price = purchase.price,
+        progressStatus = purchase.progressStatus.name,
+        currentParticipants = currentParticipants,
+        maxParticipants = purchase.maxParticipants,
+        imageUrl = purchase.imageUrl
+    )
+}
+
+fun toDtoWithReviewed(
+    groupPurchase: GroupPurchase,
+    participantCount: Long,
+    isReviewed: Boolean
+): GroupPurchaseWithReviewedResponseDto {
+    return GroupPurchaseWithReviewedResponseDto(
+        id = groupPurchase.groupId!!,
+        title = groupPurchase.title,
+        maxParticipants = groupPurchase.maxParticipants,
+        participantCount = participantCount,
+        isReviewed = isReviewed,
+        imageUrl = groupPurchase.imageUrl,
+        price = groupPurchase.price
+    )
+}
