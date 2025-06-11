@@ -1,48 +1,36 @@
-package com.team573.gongguri.domain.grouppurchase.entity;
+package com.team573.gongguri.domain.grouppurchase.entity
 
-import com.team573.gongguri.domain.member.entity.Member;
-import com.team573.gongguri.global.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.global.entity.BaseEntity
+import jakarta.persistence.*
 
 @Entity
-@Getter
-@NoArgsConstructor
 @Table(name = "group_purchase_participant")
-public class GroupPurchaseParticipant extends BaseEntity {
+class GroupPurchaseParticipant (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupParticipantId;
+    val groupParticipantId: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    var deposit:Boolean = false,
+
     @JoinColumn(name = "group_id", nullable = false)
-    private GroupPurchase groupPurchase;
-
     @ManyToOne(fetch = FetchType.LAZY)
+    var groupPurchase: GroupPurchase,
+
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    var member: Member,
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ParticipationStatus participationStatus;
+    @Enumerated(EnumType.STRING)
+    var participationStatus: ParticipationStatus
+) : BaseEntity() {
 
-    private Boolean deposit = false;
-
-    public void confirmDeposit() {
-        this.deposit = true;
+    fun confirmDeposit() {
+        this.deposit = true
     }
 
-    public void cancelMember() {
-        this.participationStatus = ParticipationStatus.CANCELLED;
-    }
-
-    @Builder
-    public GroupPurchaseParticipant(GroupPurchase groupPurchase, Member member, ParticipationStatus participationStatus) {
-        this.groupPurchase = groupPurchase;
-        this.member = member;
-        this.participationStatus = participationStatus;
+    fun cancelMember() {
+        this.participationStatus = ParticipationStatus.CANCELLED
     }
 }

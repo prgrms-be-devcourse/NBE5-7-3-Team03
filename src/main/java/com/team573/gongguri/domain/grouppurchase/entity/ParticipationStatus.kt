@@ -1,6 +1,6 @@
-package com.team573.gongguri.domain.grouppurchase.entity;
+package com.team573.gongguri.domain.grouppurchase.entity
 
-public enum ParticipationStatus {
+enum class ParticipationStatus {
     JOINED,
     CANCELLED
 }
