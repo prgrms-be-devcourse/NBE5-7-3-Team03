@@ -1,16 +1,21 @@
 package com.team573.gongguri.domain.chat.service;
 
+import static com.team573.gongguri.global.exception.CustomErrorCode.*;
 
-import static com.team573.gongguri.global.exception.CustomErrorCode.NOT_FOUND_CHATROOM;
-import static com.team573.gongguri.global.exception.CustomErrorCode.NOT_FOUND_MEMBER;
+import java.util.List;
+import java.util.Map;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto;
 import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto;
 import com.team573.gongguri.domain.chat.entity.ChatMessage;
 import com.team573.gongguri.domain.chat.entity.ChatRoom;
 import com.team573.gongguri.domain.chat.entity.ChatRoomParticipation;
-import com.team573.gongguri.domain.chat.mapper.ChatMessageMapper;
-import com.team573.gongguri.domain.chat.mapper.ChatRoomMapper;
+import com.team573.gongguri.domain.chat.mapper.ChatMessageMapperKt;
+import com.team573.gongguri.domain.chat.mapper.ChatRoomMapperKt;
 import com.team573.gongguri.domain.chat.repository.ChatMessageRepository;
 import com.team573.gongguri.domain.chat.repository.ChatRoomParticipationRepository;
 import com.team573.gongguri.domain.chat.repository.ChatRoomRepository;
@@ -18,12 +23,8 @@ import com.team573.gongguri.domain.chat.repository.CustomChatMessageRepository;
 import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.global.exception.CustomException;
-import java.util.List;
-import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +42,11 @@ public class ChatService {
         ChatMessageRequestDto requestDto
     ) {
         ChatMessage createdMessage
-            = ChatMessageMapper.toChatMessage(roomId, requestDto.nickname(), requestDto.content());
+            = ChatMessageMapperKt.toChatMessage(roomId, requestDto.getNickname(), requestDto.getContent());
 
-        chatMessageRepository.save(createdMessage);
+        ChatMessage saved = chatMessageRepository.save(createdMessage);
 
-        return ChatMessageMapper.toDto(createdMessage);
+        return ChatMessageMapperKt.toDto(saved);
     }
 
     // 채팅방 생성
@@ -63,7 +64,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
             .orElseThrow(() -> new CustomException(NOT_FOUND_CHATROOM));
 
-        ChatRoomParticipation createdParticipation = ChatRoomMapper.toParticipationEntity(member, chatRoom);
+        ChatRoomParticipation createdParticipation = ChatRoomMapperKt.toParticipationEntity(member, chatRoom);
 
         chatRoomParticipationRepository.save(createdParticipation);
     }
@@ -100,7 +101,7 @@ public class ChatService {
         }
 
         return messages.stream()
-            .map(ChatMessageMapper::toDto)
+            .map(ChatMessageMapperKt::toDto)
             .toList();
     }
 
