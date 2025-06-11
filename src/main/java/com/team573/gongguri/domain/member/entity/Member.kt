@@ -1,55 +1,36 @@
-package com.team573.gongguri.domain.member.entity;
+package com.team573.gongguri.domain.member.entity
 
-import com.team573.gongguri.global.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.*;
-
+import com.team573.gongguri.global.entity.BaseEntity
+import jakarta.persistence.*
 
 @Entity
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "member")
-public class Member extends BaseEntity {
+class Member(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+    val memberId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "univ_id", nullable = false)
-    private Univ univ;
+    @JoinColumn(name = "univ_id")
+    val univ: Univ,
 
-    @Column(nullable = false)
-    private String email;
+    val email: String,
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
+    @Column(unique = true)
+    val nickname: String,
 
-    @Column(nullable = false)
-    private String password;
+    val password: String,
 
-    @Column(nullable = false)
-    private int likeCount;
+    var likeCount: Int = 0,
 
-    @Column(nullable = false)
-    private int dislikeCount;
+    var dislikeCount: Int = 0
+) : BaseEntity() {
 
-    public void updateLikeCount(Boolean like) {
+    fun updateLikeCount(like: Boolean) {
         if (like) {
-            this.likeCount += 1;
+            likeCount++
         } else {
-            this.dislikeCount += 1;
+            dislikeCount++
         }
     }
 }

@@ -4,7 +4,7 @@ import com.team573.gongguri.domain.member.dto.JoinRequestDto;
 import com.team573.gongguri.domain.member.dto.LikeInfoDto;
 import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.entity.Univ;
-import com.team573.gongguri.domain.member.mapper.MemberMapper;
+import com.team573.gongguri.domain.member.mapper.MemberMapperKt;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.domain.member.repository.UnivRepository;
 import com.team573.gongguri.global.exception.CustomErrorCode;
@@ -32,7 +32,7 @@ public class MemberService {
 
         String encodedPassword = passwordEncoder.encode(joinRequestDto.getPassword());
 
-        Member member = MemberMapper.toEntity(joinRequestDto, encodedPassword, univ);
+        Member member = MemberMapperKt.toEntity(joinRequestDto, encodedPassword, univ);
 
         memberRepository.save(member);
     }
