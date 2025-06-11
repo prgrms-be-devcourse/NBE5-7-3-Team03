@@ -1,18 +1,17 @@
-package com.team573.gongguri.domain.grouppurchase.dto;
+package com.team573.gongguri.domain.grouppurchase.dto
 
-import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import java.time.LocalDateTime;
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
+import java.time.LocalDateTime
 
-public record GroupPurchaseWithParticipantCountDto(
-    Long groupId,
-    String title,
-    String content,
-    int price,
-    int maxParticipants,
-    ProgressStatus progressStatus,
-    LocalDateTime createdAt,
-    Long chatRoomId,
-    Long participantCount,
-    String imageUrl
-) {
-}
+data class GroupPurchaseWithParticipantCountDto(
+    val groupId: Long,
+    val title: String,
+    val content: String,
+    val price: Int,
+    val maxParticipants: Int,
+    val progressStatus: ProgressStatus,
+    val createdAt: LocalDateTime,
+    val chatRoomId: Long,
+    val participantCount: Long,
+    val imageUrl: String
+)

@@ -1,14 +1,11 @@
-package com.team573.gongguri.domain.grouppurchase.dto;
+package com.team573.gongguri.domain.grouppurchase.dto
 
-import lombok.Builder;
-
-@Builder
-public record GroupPurchaseListResponseDto (
-        Long id,
-        String title,
-        int price,
-        int maxParticipants,
-        Long currentParticipants,
-        String progressStatus,
-        String imageUrl
-) {}
+data class GroupPurchaseListResponseDto(
+    val id: Long,
+    val title: String,
+    val price: Int,
+    val maxParticipants: Int,
+    val currentParticipants: Long,
+    val progressStatus: String,
+    val imageUrl: String
+)

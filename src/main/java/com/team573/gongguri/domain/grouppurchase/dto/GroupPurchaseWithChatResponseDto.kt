@@ -1,19 +1,15 @@
-package com.team573.gongguri.domain.grouppurchase.dto;
+package com.team573.gongguri.domain.grouppurchase.dto
 
-import java.time.LocalDateTime;
-import lombok.Builder;
+import java.time.LocalDateTime
 
-@Builder
-public record GroupPurchaseWithChatResponseDto(
-    Long id,
-    Long participantId,
-    String title,
-    Integer maxParticipants,
-    Long participantCount,
-    String progressStatus,
-    String imageUrl,
-    String chatMessage,
-    LocalDateTime createAt
-) {
-
-}
+data class GroupPurchaseWithChatResponseDto(
+    val id: Long,
+    val participantId: Long,
+    val title: String,
+    val maxParticipants: Int,
+    val participantCount: Long,
+    val progressStatus: String,
+    val imageUrl: String,
+    val chatMessage: String?,
+    val createAt: LocalDateTime
+)

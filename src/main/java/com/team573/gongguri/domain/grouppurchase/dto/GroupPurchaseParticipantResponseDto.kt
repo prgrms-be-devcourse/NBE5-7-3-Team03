@@ -1,12 +1,7 @@
-package com.team573.gongguri.domain.grouppurchase.dto;
+package com.team573.gongguri.domain.grouppurchase.dto
 
-import lombok.Builder;
-
-@Builder
-public record GroupPurchaseParticipantResponseDto(
-    Long groupParticipantId,
-    String nickname,
-    Boolean deposit
-) {
-
-}
+data class GroupPurchaseParticipantResponseDto(
+    val groupParticipantId: Long,
+    val nickname: String,
+    val deposit: Boolean
+)

@@ -1,16 +1,13 @@
-package com.team573.gongguri.domain.grouppurchase.dto;
+package com.team573.gongguri.domain.grouppurchase.dto
 
-import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import lombok.Builder;
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
 
-@Builder
-public record GroupPurchaseSimpleResponseDto(
-    Long id,
-    String title,
-    int maxParticipants,
-    Long participantCount,
-    ProgressStatus progressStatus,
-    String imageUrl,
-    int price
-) {
-}
+data class GroupPurchaseSimpleResponseDto(
+    val id: Long,
+    val title: String,
+    val maxParticipants: Int,
+    val participantCount: Long,
+    val progressStatus: ProgressStatus,
+    val imageUrl: String,
+    val price: Int
+)
