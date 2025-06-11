@@ -51,8 +51,10 @@ public class GroupPurchaseService {
 
 
     private GroupPurchase getActiveGroupPurchase(Long id) {
-        GroupPurchase groupPurchase = groupPurchaseRepository.findByGroupIdAndDeletedFalse(id)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE));
+        GroupPurchase groupPurchase = groupPurchaseRepository.findByGroupIdAndDeletedFalse(id);
+        if (groupPurchase == null) {
+            throw new CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE);
+        }
         return groupPurchase;
     }
 
