@@ -1,7 +1,6 @@
-package com.team573.gongguri.domain.chat.dto;
+package com.team573.gongguri.domain.chat.dto
 
-public record ChatMessageRequestDto(
-    String nickname,
-    String content
-) {
-}
+data class ChatMessageRequestDto(
+    val nickname: String,
+    val content: String
+)

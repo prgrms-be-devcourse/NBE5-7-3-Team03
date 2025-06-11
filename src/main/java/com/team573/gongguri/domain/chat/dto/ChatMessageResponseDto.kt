@@ -1,14 +1,10 @@
-package com.team573.gongguri.domain.chat.dto;
+package com.team573.gongguri.domain.chat.dto
 
-import java.time.LocalDateTime;
-import lombok.Builder;
+import java.time.LocalDateTime
 
-@Builder
-public record ChatMessageResponseDto(
-    String messageId,
-    String nickname,
-    String content,
-    LocalDateTime createdAt
-) {
-
-}
+data class ChatMessageResponseDto(
+    val messageId: String,
+    val nickname: String,
+    val content: String,
+    val createdAt: LocalDateTime
+)

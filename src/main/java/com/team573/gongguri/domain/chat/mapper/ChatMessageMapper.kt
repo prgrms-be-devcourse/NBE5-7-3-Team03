@@ -1,26 +1,23 @@
-package com.team573.gongguri.domain.chat.mapper;
+package com.team573.gongguri.domain.chat.mapper
 
-import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto;
-import com.team573.gongguri.domain.chat.entity.ChatMessage;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto
+import com.team573.gongguri.domain.chat.entity.ChatMessage
+import java.time.LocalDateTime
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ChatMessageMapper {
-    public static ChatMessage toChatMessage(Long roomId, String nickname, String content) {
-        return ChatMessage.builder()
-            .roomId(roomId)
-            .nickname(nickname)
-            .content(content)
-            .build();
-    }
+fun toChatMessage(roomId: Long, nickname: String, content: String): ChatMessage {
+    return ChatMessage(
+        roomId = roomId,
+        nickname = nickname,
+        content = content
+    )
+}
 
-    public static ChatMessageResponseDto toDto(ChatMessage chatMessage) {
-        return ChatMessageResponseDto.builder()
-            .messageId(chatMessage.getId().toHexString())
-            .content(chatMessage.getContent())
-            .nickname(chatMessage.getNickname())
-            .createdAt(chatMessage.getCreatedAt())
-            .build();
-    }
+
+fun toDto(chatMessage: ChatMessage): ChatMessageResponseDto {
+    return ChatMessageResponseDto(
+        messageId = chatMessage.id!!.toHexString(),
+        content = chatMessage.content,
+        nickname = chatMessage.nickname,
+        createdAt = chatMessage.createdAt ?: LocalDateTime.now()
+    )
 }
