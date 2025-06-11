@@ -8,8 +8,8 @@ public class MemberMapper {
 
     public static Member toEntity(JoinRequestDto dto, String encodedPassword, Univ univ) {
         return Member.builder()
-                .email(dto.email())
-                .nickname(dto.nickname())
+                .email(dto.getEmail())
+                .nickname(dto.getNickname())
                 .password(encodedPassword)
                 .likeCount(0)
                 .dislikeCount(0)

@@ -22,15 +22,15 @@ public class MemberService {
 
     public void join(JoinRequestDto joinRequestDto) {
         // 검증
-        if (joinRequestDto.verified() == null || !joinRequestDto.verified()) {
+        if ( !joinRequestDto.getVerified() ) {
             throw new CustomException(CustomErrorCode.EMAIL_NOT_VERIFIED);
         }
-        validateDuplicateMember(joinRequestDto.email(), joinRequestDto.nickname());
+        validateDuplicateMember(joinRequestDto.getEmail(), joinRequestDto.getNickname());
 
-        Univ univ = univRepository.findByUnivName(joinRequestDto.univName())
-                .orElseGet(() -> univRepository.save(new Univ(joinRequestDto.univName())));
+        Univ univ = univRepository.findByUnivName(joinRequestDto.getUnivName())
+                .orElseGet(() -> univRepository.save(new Univ(joinRequestDto.getUnivName())));
 
-        String encodedPassword = passwordEncoder.encode(joinRequestDto.password());
+        String encodedPassword = passwordEncoder.encode(joinRequestDto.getPassword());
 
         Member member = MemberMapper.toEntity(joinRequestDto, encodedPassword, univ);
 
