@@ -114,7 +114,7 @@ public class GroupPurchaseService {
         try {
             groupPurchases = groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, statuses, size);
         } catch (Exception e) {
-            log.error("공동구매 목록 조회 실패");
+            log.error("공동구매 목록 조회 실패: {}", e.getMessage(), e);
             throw new CustomException(CustomErrorCode.FAILED_GROUP_PURCHASE_LIST);
         }
         return groupPurchases.stream()
