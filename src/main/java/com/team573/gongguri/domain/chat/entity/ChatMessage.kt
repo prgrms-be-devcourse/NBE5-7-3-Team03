@@ -19,11 +19,6 @@ class ChatMessage (
 
     var nickname: String,
 ): BaseEntity() {
-//    @CreatedDate
-//    var createdAt: LocalDateTime? = null
-//
-//    @LastModifiedDate
-//    var updatedAt: LocalDateTime? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -31,15 +26,19 @@ class ChatMessage (
 
         other as ChatMessage
 
+        if (roomId != other.roomId) return false
         if (id != other.id) return false
-        if (createdAt != other.createdAt) return false
+        if (content != other.content) return false
+        if (nickname != other.nickname) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        result = 31 * result + createdAt.hashCode()
+        var result = roomId.hashCode()
+        result = 31 * result + (id?.hashCode() ?: 0)
+        result = 31 * result + content.hashCode()
+        result = 31 * result + nickname.hashCode()
         return result
     }
 }
