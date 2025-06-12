@@ -1,12 +1,11 @@
-package com.team573.gongguri.domain.member.repository;
+package com.team573.gongguri.domain.member.repository
 
-import com.team573.gongguri.domain.member.entity.Univ;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
+import com.team573.gongguri.domain.member.entity.Univ
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
-public interface UnivRepository extends JpaRepository<Univ, Long> {
-    Optional<Univ> findByUnivName(String univName);
+interface UnivRepository : JpaRepository<Univ, Long?> {
+    fun findByUnivName(univName: String): Optional<Univ?>
 }
