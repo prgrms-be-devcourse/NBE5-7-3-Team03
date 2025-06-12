@@ -11,7 +11,7 @@ data class GroupPurchaseWithParticipantCountDto(
     val maxParticipants: Int,
     val progressStatus: ProgressStatus,
     val createdAt: LocalDateTime,
-    val chatRoomId: Long,
+    val chatRoomId: Long?,
     val participantCount: Long,
     val imageUrl: String
 )
