@@ -7,5 +7,5 @@ import java.util.*
 
 @Repository
 interface UnivRepository : JpaRepository<Univ, Long?> {
-    fun findByUnivName(univName: String): Optional<Univ?>
+    fun findByUnivName(univName: String): Univ?
 }

@@ -1,68 +1,70 @@
-package com.team573.gongguri.domain.member.service;
+package com.team573.gongguri.domain.member.service
 
-import com.team573.gongguri.domain.member.dto.JoinRequestDto;
-import com.team573.gongguri.domain.member.dto.LikeInfoDto;
-import com.team573.gongguri.domain.member.entity.Member;
-import com.team573.gongguri.domain.member.entity.Univ;
-import com.team573.gongguri.domain.member.mapper.MemberMapperKt;
-import com.team573.gongguri.domain.member.repository.MemberRepository;
-import com.team573.gongguri.domain.member.repository.UnivRepository;
-import com.team573.gongguri.global.exception.CustomErrorCode;
-import com.team573.gongguri.global.exception.CustomException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import com.team573.gongguri.domain.member.dto.JoinRequestDto
+import com.team573.gongguri.domain.member.dto.LikeInfoDto
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.domain.member.entity.Univ
+import com.team573.gongguri.domain.member.mapper.toEntity
+import com.team573.gongguri.domain.member.repository.MemberRepository
+import com.team573.gongguri.domain.member.repository.UnivRepository
+import com.team573.gongguri.global.exception.CustomErrorCode
+import com.team573.gongguri.global.exception.CustomException
+import lombok.RequiredArgsConstructor
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import java.util.function.Supplier
 
 @Service
-@RequiredArgsConstructor
-public class MemberService {
-    private final MemberRepository memberRepository;
-    private final UnivRepository univRepository;
-    private final PasswordEncoder passwordEncoder;
+class MemberService(
+    private val memberRepository: MemberRepository,
+    private val univRepository: UnivRepository,
+    private val passwordEncoder: PasswordEncoder
+) {
 
-    public void join(JoinRequestDto joinRequestDto) {
-        // 검증
-        if ( !joinRequestDto.getVerified() ) {
-            throw new CustomException(CustomErrorCode.EMAIL_NOT_VERIFIED);
+    fun join(joinRequestDto: JoinRequestDto) {
+        // 이메일 인증 여부 확인
+        if (!joinRequestDto.verified) {
+            throw CustomException(CustomErrorCode.EMAIL_NOT_VERIFIED)
         }
-        validateDuplicateMember(joinRequestDto.getEmail(), joinRequestDto.getNickname());
 
-        Univ univ = univRepository.findByUnivName(joinRequestDto.getUnivName())
-                .orElseGet(() -> univRepository.save(new Univ(joinRequestDto.getUnivName())));
+        validateDuplicateMember(joinRequestDto.email, joinRequestDto.nickname)
 
-        String encodedPassword = passwordEncoder.encode(joinRequestDto.getPassword());
+        val univ = univRepository.findByUnivName(joinRequestDto.univName)
+            ?: univRepository.save(Univ(joinRequestDto.univName))
 
-        Member member = MemberMapperKt.toEntity(joinRequestDto, encodedPassword, univ);
+        val encodedPassword = passwordEncoder.encode(joinRequestDto.password)
 
-        memberRepository.save(member);
+        val member = toEntity(joinRequestDto, encodedPassword, univ)
+        memberRepository.save(member)
     }
-    public void validateLoginError(String error) {
+
+    fun validateLoginError(error: String?) {
         if (error != null) {
             try {
-                CustomErrorCode errorCode = CustomErrorCode.valueOf(error);
-                throw new CustomException(errorCode);
-            } catch (IllegalArgumentException e) {
-                throw new CustomException(CustomErrorCode.INVALID_REQUEST);
+                val errorCode = CustomErrorCode.valueOf(error)
+                throw CustomException(errorCode)
+            } catch (e: IllegalArgumentException) {
+                throw CustomException(CustomErrorCode.INVALID_REQUEST)
             }
         }
     }
 
-    private void validateDuplicateMember(String email, String nickname) {
+    private fun validateDuplicateMember(email: String, nickname: String) {
         if (memberRepository.existsByEmail(email)) {
-            throw new CustomException(CustomErrorCode.EMAIL_ALREADY_EXISTS);
+            throw CustomException(CustomErrorCode.EMAIL_ALREADY_EXISTS)
         }
-
         if (memberRepository.existsByNickname(nickname)) {
-            throw new CustomException(CustomErrorCode.NICKNAME_ALREADY_EXISTS);
+            throw CustomException(CustomErrorCode.NICKNAME_ALREADY_EXISTS)
         }
     }
 
-    public Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));
+    fun getMemberById(memberId: Long): Member {
+        return memberRepository.findByMemberId(memberId)
+            ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
     }
-    public LikeInfoDto getLikeInfo(Long memberId) {
-        Member member = getMemberById(memberId);
-        return new LikeInfoDto(member.getLikeCount(), member.getDislikeCount());
+
+    fun getLikeInfo(memberId: Long): LikeInfoDto {
+        val member = getMemberById(memberId)
+        return LikeInfoDto(member.likeCount, member.dislikeCount)
     }
 }
