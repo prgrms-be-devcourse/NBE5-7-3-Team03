@@ -1,15 +1,9 @@
 package com.team573.gongguri.domain.chat.entity
 
-import com.team573.gongguri.global.entity.BaseEntity
-import jakarta.persistence.EntityListeners
-import lombok.Builder
-import lombok.Getter
-import lombok.NoArgsConstructor
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
@@ -28,8 +22,26 @@ class ChatMessage (
     var nickname: String,
 ) {
     @CreatedDate
-    var createdAt: LocalDateTime? = null
+    lateinit var createdAt: LocalDateTime
 
     @LastModifiedDate
-    var updatedAt: LocalDateTime? = null
+    lateinit var updatedAt: LocalDateTime
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ChatMessage
+
+        if (id != other.id) return false
+        if (createdAt != other.createdAt) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + createdAt.hashCode()
+        return result
+    }
 }
