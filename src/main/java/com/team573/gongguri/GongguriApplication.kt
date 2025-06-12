@@ -1,17 +1,15 @@
-package com.team573.gongguri;
+package com.team573.gongguri
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import org.springframework.data.mongodb.config.EnableMongoAuditing
 
 @EnableJpaAuditing
 @EnableMongoAuditing
 @SpringBootApplication
-public class GongguriApplication {
+class GongguriApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(GongguriApplication.class, args);
-    }
-
+fun main(args: Array<String>) {
+    runApplication<GongguriApplication>(*args)
 }
