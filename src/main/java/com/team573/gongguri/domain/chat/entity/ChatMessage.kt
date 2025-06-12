@@ -1,12 +1,10 @@
 package com.team573.gongguri.domain.chat.entity
 
+import com.team573.gongguri.global.entity.BaseEntity
 import org.bson.types.ObjectId
-import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
-import java.time.LocalDateTime
 
 
 @Document(collection = "chat_message")
@@ -20,12 +18,12 @@ class ChatMessage (
     var roomId: Long,
 
     var nickname: String,
-) {
-    @CreatedDate
-    lateinit var createdAt: LocalDateTime
-
-    @LastModifiedDate
-    lateinit var updatedAt: LocalDateTime
+): BaseEntity() {
+//    @CreatedDate
+//    var createdAt: LocalDateTime? = null
+//
+//    @LastModifiedDate
+//    var updatedAt: LocalDateTime? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
