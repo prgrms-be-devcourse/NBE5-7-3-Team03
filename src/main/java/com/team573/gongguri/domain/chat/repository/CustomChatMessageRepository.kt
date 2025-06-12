@@ -1,6 +1,5 @@
 package com.team573.gongguri.domain.chat.repository
 
-import lombok.RequiredArgsConstructor
 import org.bson.Document
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -10,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Repository
 
 @Repository
-@RequiredArgsConstructor
 class CustomChatMessageRepository(
     private val mongoTemplate: MongoTemplate
 ) {
@@ -34,7 +32,7 @@ class CustomChatMessageRepository(
     }
 
     // 최근 메세지 조회 조건 설정
-    private fun createLatestMessageAggregation(chatRoomIds: List<Long?>): Aggregation {
+    private fun createLatestMessageAggregation(chatRoomIds: List<Long>): Aggregation {
         return Aggregation.newAggregation(
             Aggregation.match(Criteria.where("room_id").`in`(chatRoomIds)),
             Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdAt")),
@@ -48,7 +46,7 @@ class CustomChatMessageRepository(
         val latestMessageContents: MutableMap<Long, String> = HashMap()
 
         for (doc in results) {
-            val roomId = doc.get("_id", Long::class.java)
+            val roomId = doc["_id"] as Long
             val content = doc.getString("latestContent")
             if (content != null) {
                 latestMessageContents[roomId] = content

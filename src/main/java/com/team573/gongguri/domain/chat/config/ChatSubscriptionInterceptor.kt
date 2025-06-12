@@ -8,6 +8,7 @@ import com.team573.gongguri.global.exception.CustomException
 import com.team573.gongguri.global.security.CustomUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompCommand
@@ -33,7 +34,7 @@ class ChatSubscriptionInterceptor(
 
         // accessor null 체크
         if (accessor == null || accessor.command == null) {
-            log.error(CustomErrorCode.INVALID_REQUEST.message)
+            log.error(CustomErrorCode.INVALID_REQUEST.getMessage())
             throw CustomException(CustomErrorCode.INVALID_REQUEST)
         }
 
@@ -46,7 +47,7 @@ class ChatSubscriptionInterceptor(
 
         val authentication = accessor.user as Authentication
         if (!authentication.isAuthenticated) {
-            log.error(CustomErrorCode.FAILED_AUTHENTICATION.message)
+            log.error(CustomErrorCode.FAILED_AUTHENTICATION.getMessage())
             throw CustomException(CustomErrorCode.FAILED_AUTHENTICATION)
         }
 
@@ -55,13 +56,11 @@ class ChatSubscriptionInterceptor(
         val destination = accessor.destination
         val roomId = extractRoomId(destination)
 
-        val member = memberRepository.findById(memberId)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_MEMBER) }
-        val chatRoom = chatRoomRepository.findById(roomId)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_CHATROOM) }
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
+        val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
 
         if (!chatRoomParticipationRepository.existsByChatRoomAndMember(chatRoom, member)) {
-            log.error(CustomErrorCode.NOT_FOUND_MEMBER.message)
+            log.error(CustomErrorCode.NOT_FOUND_MEMBER.getMessage())
             throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
         }
 
@@ -75,7 +74,7 @@ class ChatSubscriptionInterceptor(
             val roomIdStr = destination.substring(prefix.length)
             return roomIdStr.toLong()
         } else {
-            log.error(CustomErrorCode.NOT_FOUND_MEMBER.message)
+            log.error(CustomErrorCode.NOT_FOUND_MEMBER.getMessage())
             throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
         }
     }
