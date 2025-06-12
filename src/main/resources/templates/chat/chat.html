@@ -23,16 +23,16 @@
           <div class="purchase-header">
             <span class="purchase-title" th:text="${groupPurchase.title}"></span>
             <span class="status-badge"
-                  th:text="${groupPurchase.progressStatus.name() == 'RECRUITING' ? '진행중'
-                          : (groupPurchase.progressStatus.name() == 'CLOSED' ? '모집마감' : '완료')}"
-                  th:classappend="| ${groupPurchase.progressStatus.name() == 'RECRUITING' ? 'status-open'
-                          : (groupPurchase.progressStatus.name() == 'CLOSED' ? 'status-closed' : 'status-done')} |">
+                  th:text="${groupPurchase.getProgressStatus().name() == 'RECRUITING' ? '진행중'
+                          : (groupPurchase.getProgressStatus().name() == 'CLOSED' ? '모집마감' : '완료')}"
+                  th:classappend="| ${groupPurchase.getProgressStatus().name() == 'RECRUITING' ? 'status-open'
+                          : (groupPurchase.getProgressStatus().name() == 'CLOSED' ? 'status-closed' : 'status-done')} |">
                             </span>
           </div>
           <div class="purchase-footer">
-            <span><strong>₩<span th:text="${#numbers.formatInteger(groupPurchase.price, 3, 'COMMA')}"></span></strong></span>
+            <span><strong>₩<span th:text="${#numbers.formatInteger(groupPurchase.getPrice(), 3, 'COMMA')}"></span></strong></span>
             <span class="participant-count" id="participantCount">
-              👥 <span th:text="${groupPurchase.participantCount()} ?: 0"></span>/<span th:text="${groupPurchase.maxParticipants}"></span>
+              👥 <span th:text="${groupPurchase.getParticipantCount()} ?: 0"></span>/<span th:text="${groupPurchase.getMaxParticipants()}"></span>
             </span>
           </div>
         </div>
