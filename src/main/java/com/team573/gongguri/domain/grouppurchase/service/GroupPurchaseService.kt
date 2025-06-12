@@ -166,7 +166,9 @@ class GroupPurchaseService(
         registerParticipant(groupPurchase, member)
 
         try {
-            chatService.addChatParticipation(groupPurchase.chatRoom.chatRoomId, member.email)
+            val chatRoomId = groupPurchase.chatRoom.chatRoomId
+                ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
+            chatService.addChatParticipation(chatRoomId, member.email)
         } catch (e: Exception) {
             log.error("채팅방 참여 실패", e)
             throw CustomException(CustomErrorCode.CHAT_JOIN_FALED)
@@ -206,7 +208,10 @@ class GroupPurchaseService(
 
     // 조회한 공동 구매 채팅 메시지 조회
     private fun getFirstMessages(groupPurchases: List<GroupPurchase>): Map<Long, String> =
-        chatService.getFirstMessageMap(groupPurchases.map { it.chatRoom.chatRoomId })
+        chatService.getFirstMessageMap(groupPurchases.map { it.chatRoom.chatRoomId
+            ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
+        })
+
 
     // ParticipationStatus 로 해당 공동 구매 참여자 수 조회
     private fun countParticipantsByStatus(groupPurchase: GroupPurchase, status: ParticipationStatus): Long =
