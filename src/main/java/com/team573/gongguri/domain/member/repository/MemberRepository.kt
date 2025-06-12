@@ -9,7 +9,7 @@ import java.util.*
 interface MemberRepository : JpaRepository<Member, Long> {
     fun findByMemberId(id: Long): Member?
 
-    fun findByEmail(email: String): Optional<Member?> // TODO 참조 Service(Chat,UserDetails) 마이그레이션 이후 `Member?`로 반환 타입 변경 필요
+    fun findByEmail(email: String?): Optional<Member> // TODO 참조 Service(Chat,UserDetails) 마이그레이션 이후 `Member?`로 반환 타입 변경 필요
 
     fun existsByEmail(email: String): Boolean
 
