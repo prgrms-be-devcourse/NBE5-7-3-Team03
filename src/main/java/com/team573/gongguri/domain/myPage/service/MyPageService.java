@@ -1,17 +1,19 @@
 package com.team573.gongguri.domain.myPage.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseWithReviewedResponseDto;
 import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase;
 import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchaseParticipant;
 import com.team573.gongguri.domain.grouppurchase.entity.ParticipationStatus;
 import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseMapper;
+import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseMapperKt;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseParticipantRepository;
 import com.team573.gongguri.domain.review.repository.ReviewRepository;
-import java.util.List;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class MyPageService {
         boolean isReviewed = reviewRepository.existsByGroupPurchase_groupIdAndMember_memberId(
             groupPurchase.getGroupId(), memberId);
 
-        return GroupPurchaseMapper.toDtoWithReviewed(groupPurchase, participantCount, isReviewed);
+        return GroupPurchaseMapperKt.toDtoWithReviewed(groupPurchase, participantCount, isReviewed);
     }
 
 }

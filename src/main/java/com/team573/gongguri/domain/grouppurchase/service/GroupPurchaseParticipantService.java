@@ -1,21 +1,22 @@
 package com.team573.gongguri.domain.grouppurchase.service;
 
-import static com.team573.gongguri.global.exception.CustomErrorCode.CANNOT_CANCEL_PAID_PARTICIPANT;
-import static com.team573.gongguri.global.exception.CustomErrorCode.NOT_FOUND_PARTICIPANT;
-import static com.team573.gongguri.global.exception.CustomErrorCode.UNAUTHORIZED_GROUP_PURCHASE_MANAGE;
+import static com.team573.gongguri.global.exception.CustomErrorCode.*;
+
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.team573.gongguri.domain.chat.service.ChatService;
 import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseParticipantResponseDto;
 import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchaseParticipant;
-import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseParticipantMapper;
+import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseParticipantMapperKt;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseParticipantRepository;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseRepository;
 import com.team573.gongguri.global.exception.CustomException;
-import java.util.List;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +70,7 @@ public class GroupPurchaseParticipantService {
         );
 
         return participants.stream()
-            .map(GroupPurchaseParticipantMapper::toDto)
+            .map(GroupPurchaseParticipantMapperKt::toDto)
             .toList();
     }
 
