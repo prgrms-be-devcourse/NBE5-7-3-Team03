@@ -1,17 +1,15 @@
-package com.team573.gongguri.global.exception;
+package com.team573.gongguri.global.exception
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@AllArgsConstructor
-public enum ErrorStatus {
+enum class ErrorStatus(
+    private val httpStatus: HttpStatus
+) {
     BAD_REQUEST(HttpStatus.BAD_REQUEST),
     FORBIDDEN(HttpStatus.FORBIDDEN),
     NOT_FOUND(HttpStatus.NOT_FOUND),
     CONFLICT(HttpStatus.CONFLICT),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED);
 
-    private final HttpStatus httpStatus;
+    fun getHttpStatus(): HttpStatus = httpStatus
 }

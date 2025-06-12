@@ -1,8 +1,4 @@
-package com.team573.gongguri.global.exception;
+package com.team573.gongguri.global.exception
 
-import lombok.Builder;
 
-@Builder
-public record CustomErrorResponse(String code, String message) {
-
-}
+data class CustomErrorResponse(val code: String, val message: String)

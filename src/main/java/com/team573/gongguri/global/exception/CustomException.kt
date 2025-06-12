@@ -1,12 +1,6 @@
-package com.team573.gongguri.global.exception;
+package com.team573.gongguri.global.exception
 
-import lombok.Getter;
 
-@Getter
-public class CustomException extends RuntimeException {
-    private final CustomErrorCode customErrorCode;
-
-    public CustomException(CustomErrorCode customErrorCode) {
-        this.customErrorCode = customErrorCode;
-    }
+class CustomException(private val customErrorCode: CustomErrorCode) : RuntimeException() {
+    fun getCustomErrorCode(): CustomErrorCode = customErrorCode
 }
