@@ -1,27 +1,25 @@
-package com.team573.gongguri.domain.chat.controller;
+package com.team573.gongguri.domain.chat.controller
 
-import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto;
-import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto;
-import com.team573.gongguri.domain.chat.service.ChatService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto
+import com.team573.gongguri.domain.chat.dto.ChatMessageResponseDto
+import com.team573.gongguri.domain.chat.service.ChatService
+import org.springframework.messaging.handler.annotation.DestinationVariable
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.stereotype.Controller
 
 @Controller
-@RequiredArgsConstructor
-public class ChatSocketController {
-
-    private final ChatService chatService;
+class ChatSocketController(
+    private val chatService: ChatService
+) {
 
     @MessageMapping("/{roomId}")
     @SendTo("/room/{roomId}")
-    public ChatMessageResponseDto sendMessage(
-        @DestinationVariable Long roomId,
-        ChatMessageRequestDto requestDto
-    ) {
+    fun sendMessage(
+        @DestinationVariable roomId: Long,
+        requestDto: ChatMessageRequestDto
+    ): ChatMessageResponseDto {
         // DB에 채팅 저장
-        return chatService.addChatMessage(roomId, requestDto);
+        return chatService.addChatMessage(roomId, requestDto)
     }
 }
