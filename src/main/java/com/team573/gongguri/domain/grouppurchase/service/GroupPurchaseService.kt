@@ -239,7 +239,6 @@ class GroupPurchaseService(
     fun findCreatedPurchases(memberId: Long, purchaseFilter: PurchaseFilter): List<GroupPurchaseListResponseDto> {
         memberRepository.findById(memberId).orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_MEMBER) }
 
-
         val purchases: List<GroupPurchase>
         val statuses = purchaseFilter.toStatuses()
 

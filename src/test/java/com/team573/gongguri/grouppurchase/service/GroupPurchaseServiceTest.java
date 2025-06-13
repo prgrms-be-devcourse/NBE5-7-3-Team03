@@ -4,7 +4,9 @@ import com.team573.gongguri.domain.chat.entity.ChatRoom;
 import com.team573.gongguri.domain.chat.service.ChatService;
 import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseCreateResponseDto;
 import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseRequestDto;
+import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseUpdateResponseDto;
 import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase;
+import com.team573.gongguri.domain.grouppurchase.entity.ParticipationStatus;
 import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
 import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseMapperKt;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseJpqlRepository;
@@ -15,14 +17,16 @@ import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.entity.Univ;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.domain.member.service.MemberService;
+import com.team573.gongguri.global.exception.CustomErrorCode;
+import com.team573.gongguri.global.exception.CustomException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -133,4 +137,125 @@ public class GroupPurchaseServiceTest {
     }
 
     @Test
+    void update() {
+        // given
+        Long groupId = 100L;
+
+        GroupPurchase existingPurchase = new GroupPurchase(
+                groupId,
+                member,
+                univ,
+                chatRoom,
+                ProgressStatus.RECRUITING,
+                "기존 제목",
+                "기존 내용",
+                5000,
+                3,
+                "국민은행",
+                "222-2222-2222-22",
+                "https://oldimage.com/item.jpg",
+                false
+        );
+
+        GroupPurchaseRequestDto updateDto = new GroupPurchaseRequestDto(
+                "수정된 제목",
+                "수정된 내용",
+                12000,
+                6,
+                "신한은행",
+                "333-3333-3333-33",
+                "CLOSED",
+                "https://newimage.com/item.jpg"
+        );
+
+        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(existingPurchase);
+
+        // when
+        GroupPurchaseUpdateResponseDto result = groupPurchaseService.update(groupId, updateDto);
+
+        // then
+        assertNotNull(result);
+        assertEquals("수정된 제목", result.getTitle());
+        assertEquals("수정된 내용", result.getContent());
+        assertEquals(12000, result.getPrice());
+        assertEquals(6, result.getMaxParticipants());
+        assertEquals("CLOSED", result.getProgressStatus());
+        assertEquals("https://newimage.com/item.jpg", result.getImageUrl());
+
+        // 검증
+        verify(groupPurchaseRepository).findByGroupIdAndDeletedFalse(groupId);
+    }
+
+    @Test
+    void delete() {
+        // given
+        Long groupId = 100L;
+        Long memberId = this.memberId;
+
+        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(groupPurchase);
+        when(groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndDepositIsTrue(groupId)).thenReturn(false);
+
+        // when
+        groupPurchaseService.delete(groupId, memberId);
+
+        // then
+        assertTrue(groupPurchase.getDeleted()); // markAsDeleted()가 정상 호출되었는지 확인
+
+        verify(groupPurchaseRepository).findByGroupIdAndDeletedFalse(groupId);
+        verify(groupPurchaseParticipantRepository).existsByGroupPurchase_GroupIdAndDepositIsTrue(groupId);
+    }
+
+    @Test
+    void join() {
+        //given
+        Long groupId = 100L;
+        Long memberId = this.memberId;
+        when(memberService.getMemberById(memberId)).thenReturn(member);
+        when(groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupId, memberId)).thenReturn(false);
+        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(groupPurchase);
+        when(groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED)).thenReturn(1L);
+
+        //when
+        groupPurchaseService.join(groupId, memberId);
+
+        //then
+        assertEquals(ProgressStatus.RECRUITING, groupPurchase.getProgressStatus());
+        verify(chatService).addChatParticipation(groupPurchase.getChatRoom().getChatRoomId(), member.getEmail());
+        verify(groupPurchaseParticipantRepository).save(any());
+
+    }
+
+    @Test
+    @DisplayName("이미 공동구매에 참여중인 경우 확인 테스트")
+    void AlreadyJoined() {
+        //given
+        Long groupId = 100L;
+        Long memberId = this.memberId;
+        when(memberService.getMemberById(memberId)).thenReturn(member);
+        when(groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupId, memberId)).thenReturn(true);
+        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(groupPurchase);
+        when(groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED)).thenReturn(1L);
+
+        //when & then
+        assertThrows(CustomException.class, () -> groupPurchaseService.join(groupId, memberId));
+    }
+
+    @Test
+    @DisplayName("이미 공동구매에 참여중인 경우 확인 테스트")
+    void AlreadyJoined_successfully() {
+        //given
+        Long groupId = 100L;
+        Long memberId = this.memberId;
+        when(memberService.getMemberById(memberId)).thenReturn(member);
+        when(groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupId, memberId)).thenReturn(true);
+        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(groupPurchase);
+        when(groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED)).thenReturn(1L);
+
+        //when & then
+        assertThrows(CustomException.class, () -> groupPurchaseService.join(groupId, memberId));
+    }
+
+//    @Test
+//    @DisplayName("")
+//    void
 }
