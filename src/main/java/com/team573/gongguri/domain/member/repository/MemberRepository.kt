@@ -11,6 +11,8 @@ interface MemberRepository : JpaRepository<Member, Long> {
 
     fun findByEmail(email: String?): Optional<Member> // TODO 참조 Service(Chat,UserDetails) 마이그레이션 이후 `Member?`로 반환 타입 변경 필요
 
+    fun findNullableByEmail(email: String): Member?
+
     fun existsByEmail(email: String): Boolean
 
     fun existsByNickname(nickname: String): Boolean
