@@ -4,11 +4,9 @@ import com.team573.gongguri.domain.grouppurchase.dto.*
 import com.team573.gongguri.domain.grouppurchase.entity.PurchaseFilter
 import com.team573.gongguri.domain.grouppurchase.service.GroupPurchaseParticipantService
 import com.team573.gongguri.domain.grouppurchase.service.GroupPurchaseService
-import com.team573.gongguri.domain.grouppurchase.service.ImageUploadService
 import com.team573.gongguri.global.security.CustomUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -120,7 +118,6 @@ class GroupPurchaseController(
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal customUserDetails: CustomUserDetails
     ): ResponseEntity<List<GroupPurchaseParticipantResponseDto>> {
-        GroupPurchaseController.log.info("{}", deposit)
         val participants = groupPurchaseParticipantService.getParticipants(
             groupPurchaseId, cursorParticipantId, deposit, customUserDetails.memberId, size
         )
