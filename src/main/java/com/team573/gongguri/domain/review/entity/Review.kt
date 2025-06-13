@@ -22,4 +22,26 @@ class Review (
 
 	@Column(nullable = false)
 	var liked: Boolean
-) : BaseEntity()
+) : BaseEntity() {
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as Review
+
+		if (reviewId != other.reviewId) return false
+		if (liked != other.liked) return false
+		if (groupPurchase != other.groupPurchase) return false
+		if (member != other.member) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = reviewId?.hashCode() ?: 0
+		result = 31 * result + liked.hashCode()
+		result = 31 * result + groupPurchase.hashCode()
+		result = 31 * result + member.hashCode()
+		return result
+	}
+}
