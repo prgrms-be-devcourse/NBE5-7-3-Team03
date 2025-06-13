@@ -14,16 +14,21 @@ class Member(
     @JoinColumn(name = "univ_id")
     val univ: Univ,
 
+    @Column(nullable = false)
     val email: String,
 
     @Column(unique = true)
     val nickname: String,
 
+    @Column(nullable = false)
     val password: String,
 
+    @Column(nullable = false)
     var likeCount: Int = 0,
 
+    @Column(nullable = false)
     var dislikeCount: Int = 0
+
 ) : BaseEntity() {
 
     fun updateLikeCount(like: Boolean) {
