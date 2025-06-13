@@ -1,41 +1,41 @@
-package com.team573.gongguri.domain.review.service;
+package com.team573.gongguri.domain.review.service
 
-import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase;
-import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseRepository;
-import com.team573.gongguri.domain.member.entity.Member;
-import com.team573.gongguri.domain.member.repository.MemberRepository;
-import com.team573.gongguri.domain.review.entity.Review;
-import com.team573.gongguri.domain.review.mapper.ReviewMapper;
-import com.team573.gongguri.domain.review.repository.ReviewRepository;
-import com.team573.gongguri.global.exception.CustomErrorCode;
-import com.team573.gongguri.global.exception.CustomException;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
+import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseRepository
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.domain.member.repository.MemberRepository
+import com.team573.gongguri.domain.review.entity.Review
+import com.team573.gongguri.domain.review.mapper.toEntity
+import com.team573.gongguri.domain.review.repository.ReviewRepository
+import com.team573.gongguri.global.exception.CustomErrorCode
+import com.team573.gongguri.global.exception.CustomException
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
-public class ReviewService {
-    private final ReviewRepository reviewRepository;
-    private final MemberRepository memberRepository;
-    private final GroupPurchaseRepository groupPurchaseRepository;
+class ReviewService(
+	private val reviewRepository: ReviewRepository,
+	private val memberRepository: MemberRepository,
+	private val groupPurchaseRepository: GroupPurchaseRepository,
+) {
 
-    @Transactional
-    public Long addReview(Long groupPurchaseId, Long memberId, Boolean like) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_MEMBER));
-        GroupPurchase groupPurchase = groupPurchaseRepository.findById(groupPurchaseId)
-            .orElseThrow(() -> new CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE));
+	@Transactional
+	fun addReview(groupPurchaseId: Long, memberId: Long, like: Boolean): Long {
+		val member: Member =
+			memberRepository.findByIdOrNull(memberId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
+		val groupPurchase: GroupPurchase = groupPurchaseRepository.findByIdOrNull(groupPurchaseId)
+			?: throw CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE)
 
-        if (!groupPurchase.getProgressStatus().equals(ProgressStatus.COMPLETED)) {
-            throw new CustomException(CustomErrorCode.IS_NOT_COMPLETED);
-        }
+		if (groupPurchase.progressStatus != ProgressStatus.COMPLETED) {
+			throw CustomException(CustomErrorCode.IS_NOT_COMPLETED)
+		}
 
-        Review createdReview = reviewRepository.save(ReviewMapper.toEntity(groupPurchase, member, like));
+		val createdReview: Review = reviewRepository.save(toEntity(groupPurchase, member, like))
 
-        groupPurchase.getMember().updateLikeCount(like);
+		groupPurchase.member.updateLikeCount(like)
 
-        return createdReview.getReviewId();
-    }
+		return createdReview.reviewId!!
+	}
 }
