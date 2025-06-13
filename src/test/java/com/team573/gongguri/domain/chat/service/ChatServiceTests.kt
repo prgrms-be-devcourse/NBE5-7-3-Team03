@@ -1,6 +1,7 @@
 package com.team573.gongguri.domain.chat.service
 
 import ChatMessageFixture
+import ChatParticipantFixture
 import ChatRoomFixture
 import MemberFixture
 import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto
@@ -77,18 +78,93 @@ class ChatServiceTests {
         }
     }
 
-    // TODO memberRepository 마이그레이션 후 테스트 코드 작성
     @Nested
     @DisplayName("addChatRoom 는")
     inner class AddChatRoomTests {
+        @Test
+        fun `채팅방을 추가하고 반환한다`() {
+            // given
+            val email = "test@test.com"
+            val roomId: Long = 1
 
+            val createdRoom = ChatRoomFixture.createWithId(roomId)
+            val addMember = MemberFixture.createWithId(1)
+            val createdParticipant = ChatParticipantFixture.createWithId(1, addMember, createdRoom)
+
+            every { chatRoomRepository.save(any()) }.returns(createdRoom)
+            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { chatRoomRepository.findByIdOrNull(roomId) } returns createdRoom
+            every { chatRoomParticipationRepository.save(any()) } returns createdParticipant
+
+            // when
+            val result = service.addChatRoom(email)
+
+            // then
+            result.chatRoomId shouldBe createdRoom.chatRoomId
+        }
     }
 
-    // TODO memberRepository 마이그레이션 후 테스트 코드 작성
     @Nested
     @DisplayName("addChatParticipation 는")
     inner class AddChatParticipationTests {
+        @Test
+        fun `회원과 채팅방이 존재하면 참여자로 등록한다`() {
+            // given
+            val email = "test@test.com"
+            val roomId: Long = 1
+            val memberId: Long = 1
 
+            val createdRoom = ChatRoomFixture.createWithId(roomId)
+            val addMember = MemberFixture.createWithId(memberId)
+            val createdParticipant = ChatParticipantFixture.create(addMember, createdRoom)
+
+            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { chatRoomRepository.findByIdOrNull(roomId) } returns createdRoom
+            every { chatRoomParticipationRepository.save(createdParticipant) } returns createdParticipant
+
+            // when
+            service.addChatParticipation(roomId, email)
+
+            // then
+            verify (exactly = 1) {chatRoomParticipationRepository.save(createdParticipant)}
+        }
+
+        @Test
+        fun `회원이 존재하지 않으면 예외를 발생한다`() {
+            // given
+            val email = "test@test.com"
+            val roomId: Long = 1
+
+            every { memberRepository.findByEmailOrNull(email) } returns null
+
+            // when
+            val exception = assertThrows<CustomException> { service.addChatParticipation(roomId, email) }
+
+            // then
+            exception.getCustomErrorCode() shouldBe CustomErrorCode.NOT_FOUND_MEMBER
+        }
+
+        @Test
+        fun `채팅방이 존재하지 않으면 예외를 발생한다`() {
+            // given
+            val email = "test@test.com"
+            val roomId: Long = 1
+            val memberId: Long = 1
+
+            val createdRoom = ChatRoomFixture.createWithId(roomId)
+            val addMember = MemberFixture.createWithId(memberId)
+            val createdParticipant = ChatParticipantFixture.create(addMember, createdRoom)
+
+            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { chatRoomRepository.findByIdOrNull(roomId) } returns null
+
+            // when
+            val exception = assertThrows<CustomException> { service.addChatParticipation(roomId, email) }
+
+
+            // then
+            exception.getCustomErrorCode() shouldBe CustomErrorCode.NOT_FOUND_CHATROOM
+        }
     }
 
     @Nested
