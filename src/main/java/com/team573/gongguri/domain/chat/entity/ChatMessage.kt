@@ -28,8 +28,6 @@ class ChatMessage (
 
         if (roomId != other.roomId) return false
         if (id != other.id) return false
-        if (content != other.content) return false
-        if (nickname != other.nickname) return false
 
         return true
     }
@@ -37,8 +35,7 @@ class ChatMessage (
     override fun hashCode(): Int {
         var result = roomId.hashCode()
         result = 31 * result + (id?.hashCode() ?: 0)
-        result = 31 * result + content.hashCode()
-        result = 31 * result + nickname.hashCode()
+
         return result
     }
 }
