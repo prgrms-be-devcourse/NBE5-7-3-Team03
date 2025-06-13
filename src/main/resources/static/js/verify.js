@@ -22,10 +22,10 @@ function sendVerificationCode() {
     fetch(`/send-verification-code?email=${encodeURIComponent(email)}&univName=${encodeURIComponent(univName)}`)
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                alert("인증 코드가 이메일로 발송되었습니다.");
+            if (data.data.success) {
+                alert(data.msg);
             } else {
-                alert("실패: " + data.message);
+                alert(data.msg);
             }
         })
         .catch(error => {
@@ -48,13 +48,13 @@ function verifyEmailCode() {
         .then(response => response.json())
         .then(data => {
             const resultDiv = document.getElementById("verification-result");
-            if (data.success) {
+            if (data.data.success) {
                 resultDiv.style.color = "green";
-                resultDiv.textContent = "인증이 완료되었습니다!";
+                resultDiv.textContent = data.msg;
                 document.getElementById("verified").value = "true"; // hidden input 수정
             } else {
                 resultDiv.style.color = "red";
-                resultDiv.textContent = "인증에 실패했습니다. 코드를 다시 확인해주세요.";
+                resultDiv.textContent = data.msg;
                 document.getElementById("verified").value = "false";
             }
         })
@@ -83,14 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`/api/member/check-email?email=${encodeURIComponent(email)}`)
             .then(res => res.json())
             .then(data => {
-                if (data.exists) {
-                    emailResult.textContent = "이미 사용 중인 이메일입니다.";
-                    emailResult.style.color = "red";
-                } else {
-                    emailResult.textContent = "사용 가능한 이메일입니다.";
-                    emailResult.style.color = "green";
-                }
-            });
+                emailResult.textContent = data.msg;
+                emailResult.style.color = data.data.exists ? "red" : "green";
+            })
     });
 
     nicknameBtn.addEventListener("click", function () {
@@ -104,13 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`/api/member/check-nickname?nickname=${encodeURIComponent(nickname)}`)
             .then(res => res.json())
             .then(data => {
-                if (data.exists) {
-                    nicknameResult.textContent = "이미 사용 중인 닉네임입니다.";
-                    nicknameResult.style.color = "red";
-                } else {
-                    nicknameResult.textContent = "사용 가능한 닉네임입니다.";
-                    nicknameResult.style.color = "green";
-                }
-            });
+                nicknameResult.textContent = data.msg;
+                nicknameResult.style.color = data.data.exists ? "red" : "green";
+            })
     });
 });

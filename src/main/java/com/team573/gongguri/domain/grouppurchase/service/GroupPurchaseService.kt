@@ -51,7 +51,7 @@ class GroupPurchaseService(
     }
 
     @Transactional
-    fun add(dto: GroupPurchaseRequestDto, memberId: Long?): GroupPurchaseCreateResponseDto {
+    fun add(dto: GroupPurchaseRequestDto, memberId: Long): GroupPurchaseCreateResponseDto {
         val writer = memberService.getMemberById(memberId)
 
         val univ = writer.univ

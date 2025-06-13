@@ -42,6 +42,12 @@ enum class CustomErrorCode(
     NICKNAME_ALREADY_EXISTS(ErrorStatus.CONFLICT, "MEMBER-003", "이미 사용 중인 닉네임입니다."),
     EMAIL_NOT_VERIFIED(ErrorStatus.BAD_REQUEST, "MEMBER-004", "이메일 인증이 완료되지 않았습니다."),
 
+    // VERIF
+    VERIFICATION_SEND_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR,"VERIF_001", "인증 코드 발송에 실패했습니다."),
+    VERIFICATION_CHECK_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_002", "이메일 인증 확인 중 오류가 발생했습니다."),
+    VERIFICATION_CODE_MISMATCH(ErrorStatus.BAD_REQUEST, "VERIF_003", "인증 코드가 일치하지 않습니다.", ),
+    CERT_CLEAR_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_004", "인증 정보 초기화에 실패했습니다.", ),
+
     // CHAT
     NOT_FOUND_CHATROOM(ErrorStatus.NOT_FOUND, "CHAT-001", "존재하지 않는 채팅방입니다."),
     NOT_PARTICIPATING(ErrorStatus.FORBIDDEN, "CHAT-002", "채팅방에 참여하고 있지 않습니다."),

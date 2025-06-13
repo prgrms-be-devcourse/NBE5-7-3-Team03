@@ -16,15 +16,13 @@ class ChatRoom(
         if (javaClass != other?.javaClass) return false
 
         other as ChatRoom
+
         if (chatRoomId != other.chatRoomId) return false
-        if (createdAt != other.createdAt) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = chatRoomId?.hashCode() ?: 0
-        result = 31 * result + createdAt.hashCode()
-        return result
+        return chatRoomId?.hashCode() ?: 0
     }
 }
