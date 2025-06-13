@@ -216,7 +216,6 @@ class GroupPurchaseService(
             ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
         })
 
-
     // ParticipationStatus 로 해당 공동 구매 참여자 수 조회
     private fun countParticipantsByStatus(groupPurchase: GroupPurchase, status: ParticipationStatus): Long =
         groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, status)

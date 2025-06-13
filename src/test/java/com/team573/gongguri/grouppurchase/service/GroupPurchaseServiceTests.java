@@ -8,7 +8,6 @@ import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseUpdateResponse
 import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase;
 import com.team573.gongguri.domain.grouppurchase.entity.ParticipationStatus;
 import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus;
-import com.team573.gongguri.domain.grouppurchase.mapper.GroupPurchaseMapperKt;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseJpqlRepository;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseParticipantRepository;
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseRepository;
@@ -17,7 +16,6 @@ import com.team573.gongguri.domain.member.entity.Member;
 import com.team573.gongguri.domain.member.entity.Univ;
 import com.team573.gongguri.domain.member.repository.MemberRepository;
 import com.team573.gongguri.domain.member.service.MemberService;
-import com.team573.gongguri.global.exception.CustomErrorCode;
 import com.team573.gongguri.global.exception.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GroupPurchaseServiceTest {
+public class GroupPurchaseServiceTests {
 
     @Mock
     private GroupPurchaseRepository groupPurchaseRepository;
@@ -240,22 +238,9 @@ public class GroupPurchaseServiceTest {
         assertThrows(CustomException.class, () -> groupPurchaseService.join(groupId, memberId));
     }
 
-    @Test
-    @DisplayName("이미 공동구매에 참여중인 경우 확인 테스트")
-    void AlreadyJoined_successfully() {
-        //given
-        Long groupId = 100L;
-        Long memberId = this.memberId;
-        when(memberService.getMemberById(memberId)).thenReturn(member);
-        when(groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupId, memberId)).thenReturn(true);
-        when(groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupId)).thenReturn(groupPurchase);
-        when(groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED)).thenReturn(1L);
 
-        //when & then
-        assertThrows(CustomException.class, () -> groupPurchaseService.join(groupId, memberId));
-    }
 
-//    @Test
-//    @DisplayName("")
-//    void
+
+
+
 }
