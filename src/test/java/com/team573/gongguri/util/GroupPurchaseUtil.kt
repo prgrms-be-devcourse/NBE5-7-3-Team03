@@ -23,4 +23,14 @@ object GroupPurchaseUtil {
 			imageUrl = "image/jpeg"
 		)
 	}
+
+	fun createList(member: Member): List<GroupPurchase> {
+		val purchaseList = mutableListOf<GroupPurchase>()
+		for(i in 1L..10L) {
+			purchaseList.add(
+				createWithId(i, member, ChatRoomUtil.createWithId(i))
+			)
+		}
+		return purchaseList
+	}
 }

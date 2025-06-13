@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -36,9 +37,6 @@ class GroupPurchaseService(
     private val groupPurchaseParticipantRepository: GroupPurchaseParticipantRepository,
     private val memberService: MemberService
 ) {
-
-
-
     private fun getActiveGroupPurchase(id: Long): GroupPurchase {
         val groupPurchase = groupPurchaseRepository.findByGroupIdAndDeletedFalse(id)
             ?: throw CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE)
@@ -215,16 +213,13 @@ class GroupPurchaseService(
             ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
         })
 
-
     // ParticipationStatus 로 해당 공동 구매 참여자 수 조회
     private fun countParticipantsByStatus(groupPurchase: GroupPurchase, status: ParticipationStatus): Long =
         groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, status)
 
-
     @Transactional(readOnly = true)
     fun getSimpleInfo(groupPurchaseId: Long): GroupPurchaseSimpleResponseDto {
-        val groupPurchase = groupPurchaseRepository.findById(groupPurchaseId)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE) }
+        val groupPurchase = groupPurchaseRepository.findByIdOrNull(groupPurchaseId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE)
 
         val participantCount = groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(
             groupPurchase,
@@ -236,8 +231,7 @@ class GroupPurchaseService(
 
     //특정 멤버가 작성한 공동구매글 조회
     fun findCreatedPurchases(memberId: Long, purchaseFilter: PurchaseFilter): List<GroupPurchaseListResponseDto> {
-        memberRepository.findById(memberId).orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_MEMBER) }
-
+        memberRepository.findByIdOrNull(memberId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
 
         val purchases: List<GroupPurchase>
         val statuses = purchaseFilter.toStatuses()

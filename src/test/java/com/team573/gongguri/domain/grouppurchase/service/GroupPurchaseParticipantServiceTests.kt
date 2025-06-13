@@ -162,10 +162,6 @@ class GroupPurchaseParticipantServiceTests {
 			val groupPurchaseId: Long = 1
 			val participantId: Long = 1
 			val memberId: Long = 1
-			val member = MemberUtil.createWithId(memberId)
-			val chatRoom = ChatRoomUtil.createWithId(1)
-			val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
-			val groupPurchaseParticipant = GroupParticipantUtil.createWithId(participantId, member, groupPurchase)
 
 			every { groupPurchaseRepository.existsByGroupIdAndMember_MemberId(groupPurchaseId, memberId) } returns true
 			every { groupPurchaseParticipantRepository.findByIdOrNull(participantId) } returns null
@@ -210,4 +206,6 @@ class GroupPurchaseParticipantServiceTests {
 			}
 		}
 	}
+
+
 }

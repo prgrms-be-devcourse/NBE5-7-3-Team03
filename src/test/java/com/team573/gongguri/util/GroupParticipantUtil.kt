@@ -29,4 +29,18 @@ object GroupParticipantUtil {
 
 		return list
 	}
+
+	fun createList(member: Member): MutableList<GroupPurchaseParticipant> {
+		val list: MutableList<GroupPurchaseParticipant> = mutableListOf()
+
+		for (i in 1..10) {
+			val id = i.toLong()
+			val chatRoom = ChatRoomUtil.createWithId(1)
+
+			val groupPurchase = GroupPurchaseUtil.createWithId(id, member, chatRoom)
+			list.add(createWithId(id, member, groupPurchase))
+		}
+
+		return list
+	}
 }
