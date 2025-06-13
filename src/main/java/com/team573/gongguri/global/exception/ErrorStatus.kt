@@ -9,7 +9,7 @@ enum class ErrorStatus(
     FORBIDDEN(HttpStatus.FORBIDDEN),
     NOT_FOUND(HttpStatus.NOT_FOUND),
     CONFLICT(HttpStatus.CONFLICT),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED);
-
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR);
     fun getHttpStatus(): HttpStatus = httpStatus
 }
