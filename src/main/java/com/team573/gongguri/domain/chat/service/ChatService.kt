@@ -48,7 +48,7 @@ class ChatService(
 
     // 채팅방 참여자 추가
     fun addChatParticipation(roomId: Long, email: String?) {
-        val member = memberRepository.findByEmailOrNull(email) ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
+        val member = memberRepository.findNullableByEmail(email!!) ?: throw CustomException(CustomErrorCode.NOT_FOUND_MEMBER)
 
         val chatRoom = chatRoomRepository.findByIdOrNull(roomId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_CHATROOM)
 

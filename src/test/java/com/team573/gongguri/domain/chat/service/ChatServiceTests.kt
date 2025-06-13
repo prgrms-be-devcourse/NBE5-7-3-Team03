@@ -1,9 +1,5 @@
 package com.team573.gongguri.domain.chat.service
 
-import ChatMessageFixture
-import ChatParticipantFixture
-import ChatRoomFixture
-import MemberFixture
 import com.team573.gongguri.domain.chat.dto.ChatMessageRequestDto
 import com.team573.gongguri.domain.chat.entity.ChatMessage
 import com.team573.gongguri.domain.chat.repository.ChatMessageRepository
@@ -13,6 +9,10 @@ import com.team573.gongguri.domain.chat.repository.CustomChatMessageRepository
 import com.team573.gongguri.domain.member.repository.MemberRepository
 import com.team573.gongguri.global.exception.CustomErrorCode
 import com.team573.gongguri.global.exception.CustomException
+import com.team573.gongguri.util.ChatMessageUtil
+import com.team573.gongguri.util.ChatParticipantUtil
+import com.team573.gongguri.util.ChatRoomUtil
+import com.team573.gongguri.util.MemberUtil
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 import org.bson.types.ObjectId
@@ -87,12 +87,12 @@ class ChatServiceTests {
             val email = "test@test.com"
             val roomId: Long = 1
 
-            val createdRoom = ChatRoomFixture.createWithId(roomId)
-            val addMember = MemberFixture.createWithId(1)
-            val createdParticipant = ChatParticipantFixture.createWithId(1, addMember, createdRoom)
+            val createdRoom = ChatRoomUtil.createWithId(roomId)
+            val addMember = MemberUtil.createWithId(1)
+            val createdParticipant = ChatParticipantUtil.createWithId(1, addMember, createdRoom)
 
             every { chatRoomRepository.save(any()) }.returns(createdRoom)
-            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { memberRepository.findNullableByEmail(email) } returns addMember
             every { chatRoomRepository.findByIdOrNull(roomId) } returns createdRoom
             every { chatRoomParticipationRepository.save(any()) } returns createdParticipant
 
@@ -114,11 +114,11 @@ class ChatServiceTests {
             val roomId: Long = 1
             val memberId: Long = 1
 
-            val createdRoom = ChatRoomFixture.createWithId(roomId)
-            val addMember = MemberFixture.createWithId(memberId)
-            val createdParticipant = ChatParticipantFixture.create(addMember, createdRoom)
+            val createdRoom = ChatRoomUtil.createWithId(roomId)
+            val addMember = MemberUtil.createWithId(memberId)
+            val createdParticipant = ChatParticipantUtil.create(addMember, createdRoom)
 
-            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { memberRepository.findNullableByEmail(email) } returns addMember
             every { chatRoomRepository.findByIdOrNull(roomId) } returns createdRoom
             every { chatRoomParticipationRepository.save(createdParticipant) } returns createdParticipant
 
@@ -135,7 +135,7 @@ class ChatServiceTests {
             val email = "test@test.com"
             val roomId: Long = 1
 
-            every { memberRepository.findByEmailOrNull(email) } returns null
+            every { memberRepository.findNullableByEmail(email) } returns null
 
             // when
             val exception = assertThrows<CustomException> { service.addChatParticipation(roomId, email) }
@@ -151,11 +151,9 @@ class ChatServiceTests {
             val roomId: Long = 1
             val memberId: Long = 1
 
-            val createdRoom = ChatRoomFixture.createWithId(roomId)
-            val addMember = MemberFixture.createWithId(memberId)
-            val createdParticipant = ChatParticipantFixture.create(addMember, createdRoom)
+            val addMember = MemberUtil.createWithId(memberId)
 
-            every { memberRepository.findByEmailOrNull(email) } returns addMember
+            every { memberRepository.findNullableByEmail(email) } returns addMember
             every { chatRoomRepository.findByIdOrNull(roomId) } returns null
 
             // when
@@ -177,8 +175,8 @@ class ChatServiceTests {
             val roomId: Long = 1
             val memberId: Long = 1
 
-            val member = MemberFixture.createWithId(memberId)
-            val chatRoom = ChatRoomFixture.createWithId(roomId)
+            val member = MemberUtil.createWithId(memberId)
+            val chatRoom = ChatRoomUtil.createWithId(roomId)
 
             every { memberRepository.findByIdOrNull(memberId) }.returns(member)
             every { chatRoomRepository.findByIdOrNull(roomId) }.returns(chatRoom)
@@ -212,7 +210,7 @@ class ChatServiceTests {
             val roomId: Long = 1
             val memberId: Long = 1
 
-            val member = MemberFixture.createWithId(memberId)
+            val member = MemberUtil.createWithId(memberId)
 
             every {memberRepository.findByIdOrNull(memberId) }.returns(member)
             every { chatRoomRepository.findByIdOrNull(roomId) }.returns(null)
@@ -232,7 +230,7 @@ class ChatServiceTests {
         @Test
         fun `cursor가 null이면 크기가 size인 가장 최신 채팅 메시지 ChatMessageResponseDto 리스트를 반환한다`() {
             // given
-            val chatMessageList = ChatMessageFixture.createList()
+            val chatMessageList = ChatMessageUtil.createList()
 
             val roomId: Long = 1
             val cursor: String? = null
@@ -255,7 +253,7 @@ class ChatServiceTests {
         @Test
         fun `cursor가 null이 아니면 크기가 size인 cusor 이전의 ChatMessageResponseDto 리스트를 반환한다`() {
             // given
-            val chatMessageList = ChatMessageFixture.createList()
+            val chatMessageList = ChatMessageUtil.createList()
 
             val roomId: Long = 1
             val cursor: String? = chatMessageList[0].id!!.toHexString()
