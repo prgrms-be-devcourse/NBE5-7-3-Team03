@@ -3,7 +3,10 @@ package com.team573.gongguri.domain.grouppurchase.service
 import com.team573.gongguri.domain.chat.entity.ChatRoom
 import com.team573.gongguri.domain.chat.service.ChatService
 import com.team573.gongguri.domain.grouppurchase.dto.*
-import com.team573.gongguri.domain.grouppurchase.entity.*
+import com.team573.gongguri.domain.grouppurchase.entity.GroupPurchase
+import com.team573.gongguri.domain.grouppurchase.entity.ParticipationStatus
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
+import com.team573.gongguri.domain.grouppurchase.entity.PurchaseFilter
 import com.team573.gongguri.domain.grouppurchase.mapper.*
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseJpqlRepository
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseParticipantRepository
