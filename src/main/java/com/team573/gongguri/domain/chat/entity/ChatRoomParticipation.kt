@@ -27,15 +27,16 @@ class ChatRoomParticipation (
         other as ChatRoomParticipation
 
         if (chatRoomParticipantId != other.chatRoomParticipantId) return false
-        if (createdAt != other.createdAt) return false
-
+        if (member != other.member) return false
+        if (chatRoom != other.chatRoom) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = chatRoomParticipantId?.hashCode() ?: 0
-        result = 31 * result + createdAt.hashCode()
+        result = 31 * result + member.hashCode()
+        result = 31 * result + chatRoom.hashCode()
         return result
     }
 }
