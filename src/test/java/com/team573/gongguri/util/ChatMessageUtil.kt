@@ -16,7 +16,7 @@ object ChatMessageUtil {
 	fun createList(): List<ChatMessage> {
 		val list: MutableList<ChatMessage> = mutableListOf()
 
-		for(i in 1..10) {
+		for (i in 1..10) {
 			list.add(createWithId())
 		}
 

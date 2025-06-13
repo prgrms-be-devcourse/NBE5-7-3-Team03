@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @WebMvcTest(ChatController::class)
-
 class ChatControllerTests {
 	@Autowired
 	lateinit var mockMvc: MockMvc
@@ -42,7 +41,7 @@ class ChatControllerTests {
 			.toList()
 
 		// when
-		`when` (chatService.getMessages(roomId, cursor, size)).thenReturn(messages)
+		`when`(chatService.getMessages(roomId, cursor, size)).thenReturn(messages)
 
 		// then
 		mockMvc.get("/chat/$roomId/messages") {

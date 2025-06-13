@@ -39,8 +39,6 @@ class ChatServiceTests {
      customChatMessageRepository
     )
 
-
-
     @Nested
     @DisplayName("addChatMessage 는")
     inner class AddChatMessageTests {
