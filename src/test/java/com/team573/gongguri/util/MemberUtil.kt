@@ -1,7 +1,9 @@
+package com.team573.gongguri.util
+
 import com.team573.gongguri.domain.member.entity.Member
 import com.team573.gongguri.domain.member.entity.Univ
 
-object MemberFixture {
+object MemberUtil {
 
 	fun createWithId(memberId: Long): Member {
 		return Member(

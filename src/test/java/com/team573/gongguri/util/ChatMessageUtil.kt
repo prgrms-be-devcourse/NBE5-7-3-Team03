@@ -1,7 +1,9 @@
+package com.team573.gongguri.util
+
 import com.team573.gongguri.domain.chat.entity.ChatMessage
 import org.bson.types.ObjectId
 
-object ChatMessageFixture {
+object ChatMessageUtil {
 	fun createWithId(): ChatMessage {
 		return ChatMessage(
 			id = ObjectId(),
