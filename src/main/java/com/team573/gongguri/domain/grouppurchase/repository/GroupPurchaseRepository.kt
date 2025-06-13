@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface GroupPurchaseRepository : JpaRepository<GroupPurchase, Long> {
+
     fun findByMember_MemberId(memberId: Long): List<GroupPurchase>
 
     fun findByMember_MemberIdAndProgressStatusIn(

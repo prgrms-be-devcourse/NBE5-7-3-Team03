@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor
 @Entity
 @Table(name = "univ")
 class Univ(
-
     val univName: String
-
 ) : BaseEntity() {
 
     @Id

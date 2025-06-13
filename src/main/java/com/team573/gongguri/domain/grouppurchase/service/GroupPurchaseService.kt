@@ -34,8 +34,6 @@ class GroupPurchaseService(
     private val memberService: MemberService
 ) {
 
-
-
     private fun getActiveGroupPurchase(id: Long): GroupPurchase {
         val groupPurchase = groupPurchaseRepository.findByGroupIdAndDeletedFalse(id)
             ?: throw CustomException(CustomErrorCode.NOT_FOUND_GROUP_PURCHASE)
@@ -69,14 +67,20 @@ class GroupPurchaseService(
         try {
             groupPurchase = toEntity(dto, writer, chatRoom, univ)
             groupPurchase.imageUrl = dto.imageUrl
+        } catch (e: Exception) {
+            log.error("공동구매 게시글 저장 실패", e)
+            throw CustomException(CustomErrorCode.CREATE_FAILED_GROUP_PURCHASE)
+        }
+
+        val savedGroupPurchase = try {
             groupPurchaseRepository.save(groupPurchase)
         } catch (e: Exception) {
             log.error("공동구매 게시글 저장 실패", e)
             throw CustomException(CustomErrorCode.CREATE_FAILED_GROUP_PURCHASE)
         }
 
-        registerParticipant(groupPurchase, writer)
-        return toCreateDto(groupPurchase)
+        registerParticipant(savedGroupPurchase, writer)
+        return toCreateDto(savedGroupPurchase)
     }
 
     @Transactional(readOnly = true)
