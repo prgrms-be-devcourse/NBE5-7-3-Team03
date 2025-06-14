@@ -20,7 +20,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/join","/send-verification-code", "/verify-email-code", "/clear-cert", "/api/member/**").anonymous()
+                        .requestMatchers("/login", "/join","/send-verification-code", "/verify-email-code", "/api/member/**").permitAll()
                         .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
