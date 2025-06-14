@@ -280,11 +280,11 @@ class GroupPurchaseServiceTests {
         )
 
         every {
-            groupPurchaseJpqlRepository!!.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size)
+            groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size)
         } returns listOf(dto1, dto2)
 
         // when
-        val result = groupPurchaseService!!.getAllByCursor(cursorId, progressStatuses, size)
+        val result = groupPurchaseService.getAllByCursor(cursorId, progressStatuses, size)
 
         // then
         result.size shouldBe 2
@@ -292,7 +292,7 @@ class GroupPurchaseServiceTests {
         result[1].title shouldBe "제목2"
 
         verify(exactly = 1) {
-            groupPurchaseJpqlRepository!!.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size)
+            groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size)
         }
     }
 
