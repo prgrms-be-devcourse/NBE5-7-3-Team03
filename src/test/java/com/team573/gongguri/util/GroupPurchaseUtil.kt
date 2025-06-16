@@ -24,6 +24,7 @@ object GroupPurchaseUtil {
 		)
 	}
 
+
 	fun createWithId(id: Long, member: Member, chatRoom: ChatRoom, progressStatus: ProgressStatus): GroupPurchase {
 		return GroupPurchase(
 			groupId = id,

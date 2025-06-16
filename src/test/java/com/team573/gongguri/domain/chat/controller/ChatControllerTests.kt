@@ -46,7 +46,6 @@ class ChatControllerTests {
 		// then
 		mockMvc.get("/chat/$roomId/messages") {
 			contentType = MediaType.APPLICATION_JSON
-			content = om.writeValueAsString(messages)
 			param("cursor", cursor)
 			param("size", size.toString())
 			with(user(AuthUtil.createUserDetails(MemberUtil.createWithId(1))))

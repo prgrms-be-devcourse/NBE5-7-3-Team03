@@ -8,8 +8,8 @@ import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchasePartici
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseRepository
 import com.team573.gongguri.global.exception.CustomErrorCode
 import com.team573.gongguri.global.exception.CustomException
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,7 +19,6 @@ class GroupPurchaseParticipantService (
     private val groupPurchaseRepository: GroupPurchaseRepository,
     private val chatService: ChatService
 ){
-
 
     @Transactional
     fun cancelParticipation(groupPurchaseId: Long, participantId: Long, memberId: Long) {
@@ -50,7 +49,6 @@ class GroupPurchaseParticipantService (
         deposit: Boolean?,
         memberId: Long,
         size: Int
-
     ): List<GroupPurchaseParticipantResponseDto> {
         val pageRequest = PageRequest.of(0, size)
 
@@ -76,8 +74,7 @@ class GroupPurchaseParticipantService (
         }
 
         // 관리하기 위한 참여자 조회
-        return groupPurchaseParticipantRepository.findById(participantId)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_PARTICIPANT) }
+        return groupPurchaseParticipantRepository.findByIdOrNull(participantId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_PARTICIPANT)
     }
 
 
