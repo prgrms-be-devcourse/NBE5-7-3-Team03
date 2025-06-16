@@ -39,6 +39,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2'
+
     // TestContainer
     testImplementation("org.testcontainers:junit-jupiter:1.19.0")
     testImplementation("org.testcontainers:mysql:1.19.0")
