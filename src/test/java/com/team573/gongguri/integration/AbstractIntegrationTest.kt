@@ -23,13 +23,11 @@ abstract class AbstractIntegrationTest {
         @JvmStatic
         @DynamicPropertySource
         fun overrideProps(registry: DynamicPropertyRegistry) {
-            // MySQL
             registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl)
             registry.add("spring.datasource.username", mysqlContainer::getUsername)
             registry.add("spring.datasource.password", mysqlContainer::getPassword)
-
-            // MongoDB
             registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl)
         }
     }
+
 }

@@ -74,6 +74,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.test {
+    maxParallelForks = 1
+    useJUnitPlatform()
+    systemProperty("org.testcontainers.reuse.enable", "true")
+}
+
 allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.Embeddable")
