@@ -39,6 +39,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+    // TestContainer
+    testImplementation("org.testcontainers:junit-jupiter:1.19.0")
+    testImplementation("org.testcontainers:mysql:1.19.0")
+    testImplementation("org.testcontainers:mongodb:1.19.0")
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
