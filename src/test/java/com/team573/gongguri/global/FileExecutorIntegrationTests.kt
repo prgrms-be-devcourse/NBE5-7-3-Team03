@@ -11,14 +11,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 
 @SpringBootTest
 @TestPropertySource(properties = ["UNIV_CERTIFICATION_API_KEY=test-key"])
 @ActiveProfiles("test")
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class FileExecutorIntegrationTests: AbstractIntegrationTest(){
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
