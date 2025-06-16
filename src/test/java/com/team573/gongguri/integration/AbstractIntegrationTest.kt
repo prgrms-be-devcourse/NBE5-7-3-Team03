@@ -10,15 +10,19 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 abstract class AbstractIntegrationTest {
     companion object {
-        @Container
-        val mysqlContainer = MySQLContainer<Nothing>("mysql:8.0.33").apply {
+
+        val mysqlContainer = MySQLContainer("mysql:8.0").apply {
             withDatabaseName("testdb")
             withUsername("testuser")
             withPassword("testpass")
+            withReuse(true)
+            start()
         }
 
-        @Container
-        val mongoContainer = MongoDBContainer("mongo:6.0.6")
+        val mongoContainer = MongoDBContainer("mongo:6.0.6").apply{
+            withReuse(true)
+            start()
+        }
 
         @JvmStatic
         @DynamicPropertySource
