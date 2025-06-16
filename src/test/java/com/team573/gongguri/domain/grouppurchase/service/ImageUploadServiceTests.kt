@@ -1,4 +1,4 @@
-package com.team573.gongguri.grouppurchase.service
+package com.team573.gongguri.domain.grouppurchase.service
 
 import com.team573.gongguri.domain.grouppurchase.service.ImageUploadService
 import com.team573.gongguri.global.exception.CustomErrorCode

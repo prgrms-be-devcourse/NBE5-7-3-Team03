@@ -1,4 +1,4 @@
-package com.team573.gongguri.grouppurchase.service
+package com.team573.gongguri.domain.grouppurchase.service
 
 import com.team573.gongguri.domain.chat.entity.ChatRoom
 import com.team573.gongguri.domain.chat.service.ChatService
