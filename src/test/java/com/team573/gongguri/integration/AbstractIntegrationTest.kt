@@ -1,5 +1,7 @@
 package com.team573.gongguri.integration
 
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
@@ -30,6 +32,18 @@ abstract class AbstractIntegrationTest {
                 "spring.data.mongodb.uri",
                 "mongodb://$containerIpAddress:$port/testdb"
             )
+        }
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun overrideProps(registry: DynamicPropertyRegistry) {
+            // MySQL
+            registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl)
+            registry.add("spring.datasource.username", mysqlContainer::getUsername)
+            registry.add("spring.datasource.password", mysqlContainer::getPassword)
+
+            // MongoDB
+            registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl)
         }
     }
 }
