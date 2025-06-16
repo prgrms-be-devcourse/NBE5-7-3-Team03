@@ -1,7 +1,10 @@
 package com.team573.gongguri.domain.grouppurchase.service
 
 import com.team573.gongguri.domain.chat.service.ChatService
+import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseRequestDto
+import com.team573.gongguri.domain.grouppurchase.dto.GroupPurchaseWithParticipantCountDto
 import com.team573.gongguri.domain.grouppurchase.entity.ParticipationStatus
+import com.team573.gongguri.domain.grouppurchase.entity.ProgressStatus
 import com.team573.gongguri.domain.grouppurchase.entity.PurchaseFilter
 import com.team573.gongguri.domain.grouppurchase.mapper.toListDto
 import com.team573.gongguri.domain.grouppurchase.repository.GroupPurchaseJpqlRepository
@@ -16,6 +19,8 @@ import com.team573.gongguri.util.GroupParticipantUtil
 import com.team573.gongguri.util.GroupPurchaseUtil
 import com.team573.gongguri.util.MemberUtil
 import io.kotest.matchers.shouldBe
+import io.mockk.*
+import org.junit.jupiter.api.*
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Nested
@@ -23,6 +28,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
+import java.time.LocalDateTime
 
 class GroupPurchaseServiceTests {
 	val groupPurchaseRepository = mockk<GroupPurchaseRepository>()
@@ -174,4 +180,289 @@ class GroupPurchaseServiceTests {
 			exception.getCustomErrorCode() shouldBe CustomErrorCode.NOT_FOUND_MEMBER
 		}
 	}
+
+    @Nested
+    inner class CRUDtests {
+        @Test
+        @DisplayName("공동구매 생성 성공 테스트")
+        fun addGroupPurchaseTests_successfully() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+
+            val groupPurchaseRequestDto = GroupPurchaseRequestDto(
+            "공구리 공구",
+            "쌉니다 싸요",
+            10000,
+            100,
+            "여간기합은행",
+            "1234567890",
+            "RECRUITING",
+            "image/jpeg"
+             )
+
+            //given
+            every { memberService.getMemberById(memberId) } returns member
+            every { chatService.addChatRoom(member.email) } returns chatRoom
+            every { groupPurchaseRepository.save(any()) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.save(any()) } returns mockk()
+
+            //when
+            val result = service.add(groupPurchaseRequestDto, memberId)
+
+            // then
+            result.title shouldBe "공구리 공구"
+            result.id shouldBe 1L
+            result.progressStatus shouldBe "RECRUITING"
+
+            verify(exactly = 1) { memberService.getMemberById(memberId) }
+            verify(exactly = 1) { chatService.addChatRoom(member.email) }
+            verify(exactly = 1) { groupPurchaseRepository.save(any()) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.save(any()) }
+        }
+
+
+
+        @Test
+        @DisplayName("공동구매 상세 조회 성공 테스트")
+        fun getGroupPurchaseTests_successfully() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { groupPurchaseRepository.findByIdOrNull(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) } returns 2L
+            every { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) } returns true
+
+            // when
+            val result = service.get(groupPurchaseId, memberId)
+
+            // then
+            result.title shouldBe "공구리 공구"
+            result.isParticipated shouldBe true
+            result.currentParticipants shouldBe 2L
+
+            verify(exactly = 1) { groupPurchaseRepository.findByIdOrNull(groupPurchaseId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) }
+        }
+
+
+        @Test
+        @DisplayName("공동구매 수정 성공 테스트")
+        fun updateGroupPurchaseTests_successfully() {
+            val groupPurchaseId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            val updateDto = GroupPurchaseRequestDto(
+                "수정된 제목",
+                "수정된 내용",
+                12000,
+                6,
+                "신한은행",
+                "333-3333-3333-33",
+                "CLOSED",
+                "https://newimage.com/item.jpg"
+            )
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+
+            // when
+            val result = service.update(groupPurchaseId, updateDto)
+
+            // then
+            result.title shouldBe "수정된 제목"
+            result.progressStatus shouldBe "CLOSED"
+            result.imageUrl shouldBe "https://newimage.com/item.jpg"
+
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+        }
+
+        @Test
+        @DisplayName("공동구매 삭제 성공 테스트")
+        fun deleteGroupPurchaseTests_successfully() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndDepositIsTrue(groupPurchaseId) } returns false
+
+            // when
+            service.delete(groupPurchaseId, memberId)
+
+            // then
+            groupPurchase.deleted shouldBe true
+
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndDepositIsTrue(groupPurchaseId) }
+        }
+
+    }
+
+    @Nested
+    inner class JoinTests {
+        @Test
+        @DisplayName("공동구매 참여 성공 테스트")
+        fun joinGroupPurchaseTests_successfully() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { memberService.getMemberById(memberId) } returns member
+            every { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) } returns false
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) } returns 1L
+            every { chatService.addChatParticipation(groupPurchase.chatRoom.chatRoomId!!, member.email) } just Runs
+            every { groupPurchaseParticipantRepository.save(any()) } returns mockk()
+
+            // when
+            service.join(groupPurchaseId, memberId)
+
+            // then
+            groupPurchase.progressStatus shouldBe ProgressStatus.RECRUITING
+
+            verify(exactly = 1) { memberService.getMemberById(memberId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) }
+            verify(exactly = 1) { chatService.addChatParticipation(groupPurchase.chatRoom.chatRoomId!!, member.email) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.save(any()) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) }
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+        }
+
+        @Test
+        @DisplayName("이미 공동구매에 참여중인 경우 예외 테스트")
+        fun joinGroupPurchaseTests_alreadyJoined_theowsException() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { memberService.getMemberById(memberId) } returns member
+            every { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) } returns true
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) } returns 1L
+
+            // when & then
+            val exception = assertThrows<CustomException> { service.join(groupPurchaseId, memberId) }
+            exception.getCustomErrorCode() shouldBe CustomErrorCode.ALREADY_JOINED
+            verify(exactly = 1) { memberService.getMemberById(memberId) }
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED)  }
+        }
+
+        @Test
+        @DisplayName("공동구매 참여 인원 초과 예외 테스트")
+        fun joinGroupPurchaseTests_participantLimitExceeded_theowsException() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { memberService.getMemberById(memberId) } returns member
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) } returns groupPurchase.maxParticipants.toLong()
+
+            // when & then
+            val exception = assertThrows<CustomException> { service.join(groupPurchaseId, memberId) }
+            exception.getCustomErrorCode() shouldBe CustomErrorCode.PARTICIPANT_LIMIT_REACHED
+            verify(exactly = 1) { memberService.getMemberById(memberId) }
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) }
+        }
+
+
+        @Test
+        @DisplayName("참여 후 정원이 가득 차면 상태가 CLOSED로 변경 테스트")
+        fun joinGroupPurchaseTests_reachesMaxParticipants_theowsException() {
+            val groupPurchaseId: Long = 1
+            val memberId: Long = 1
+            val member = MemberUtil.createWithId(1)
+            val chatRoom = ChatRoomUtil.createWithId(1)
+            val groupPurchase = GroupPurchaseUtil.createWithId(groupPurchaseId, member, chatRoom)
+            // given
+            every { memberService.getMemberById(memberId) } returns member
+            every { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) } returns groupPurchase
+            every { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) } returns (groupPurchase.maxParticipants - 1).toLong()
+            every { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) } returns false
+            every { chatService.addChatParticipation(any(), any()) } returns Unit
+            every { groupPurchaseParticipantRepository.save(any()) } returns mockk()
+
+            // when
+            service.join(groupPurchaseId, memberId)
+
+            // then
+            groupPurchase.progressStatus shouldBe ProgressStatus.CLOSED
+            verify(exactly = 1) { memberService.getMemberById(memberId) }
+            verify(exactly = 1) { groupPurchaseRepository.findByGroupIdAndDeletedFalse(groupPurchaseId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.countByGroupPurchaseAndParticipationStatus(groupPurchase, ParticipationStatus.JOINED) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.existsByGroupPurchase_GroupIdAndMember_MemberId(groupPurchaseId, memberId) }
+            verify(exactly = 1) { groupPurchaseParticipantRepository.save(any()) }
+            verify(exactly = 1) { chatService.addChatParticipation(any(), any()) }
+        }
+
+    }
+
+    @Nested
+    inner class GetAllByCursor {
+        @Test
+        @DisplayName("커서 기반 공동구매 조회 성공 테스트")
+        fun allGroupPurchaseTests_successfully() {
+            // given
+            val cursorId: Long? = null
+            val progressStatuses = listOf(ProgressStatus.RECRUITING)
+            val size = 3
+            val dto1 = GroupPurchaseWithParticipantCountDto(
+                101L,
+                "제목1",
+                "내용1",
+                10000,
+                5,
+                ProgressStatus.RECRUITING,
+                LocalDateTime.now(),
+                null,
+                1L,
+                "url1"
+            )
+
+            val dto2 = GroupPurchaseWithParticipantCountDto(
+                102L,
+                "제목2",
+                "내용2",
+                20000,
+                3,
+                ProgressStatus.RECRUITING,
+                LocalDateTime.now(),
+                null,
+                2L,
+                "url2"
+            )
+            every { groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size) } returns listOf(dto1, dto2)
+
+            // when
+            val result = service.getAllByCursor(cursorId, progressStatuses, size)
+
+            // then
+            result.size shouldBe 2
+            result[0].title shouldBe "제목1"
+            result[1].title shouldBe "제목2"
+
+            verify(exactly = 1) { groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size) }
+        }
+    }
+
+
+
 }

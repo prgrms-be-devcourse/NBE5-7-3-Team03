@@ -46,7 +46,8 @@ enum class CustomErrorCode(
     VERIFICATION_SEND_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR,"VERIF_001", "인증 코드 발송에 실패했습니다."),
     VERIFICATION_CHECK_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_002", "이메일 인증 확인 중 오류가 발생했습니다."),
     VERIFICATION_CODE_MISMATCH(ErrorStatus.BAD_REQUEST, "VERIF_003", "인증 코드가 일치하지 않습니다.", ),
-    CERT_CLEAR_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_004", "인증 정보 초기화에 실패했습니다.", ),
+    VERIFICATION_SERVER_ERROR(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_004", "인증 서버에 에러가 발생했습니다.", ),
+    CERT_CLEAR_FAILED(ErrorStatus.INTERNAL_SERVER_ERROR, "VERIF_005", "인증 정보 초기화에 실패했습니다.", ),
 
     // CHAT
     NOT_FOUND_CHATROOM(ErrorStatus.NOT_FOUND, "CHAT-001", "존재하지 않는 채팅방입니다."),

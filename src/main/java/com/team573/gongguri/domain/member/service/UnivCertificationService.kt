@@ -1,5 +1,7 @@
 package com.team573.gongguri.domain.member.service
 
+import com.team573.gongguri.global.exception.CustomErrorCode
+import com.team573.gongguri.global.exception.CustomException
 import com.univcert.api.UnivCert
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -21,11 +23,14 @@ class UnivCertificationService {
     fun verifyEmailCode(email: String, universityName: String, verificationCode: String): Boolean {
         return try {
             val response = UnivCert.certifyCode(apiKey, email, universityName, verificationCode.toInt())
-            // success 값이 Boolean이 아니면 false 반환
-            response["success"] as? Boolean ?: false
+            val success = response["success"] as? Boolean ?: false
+            if (!success) {
+                throw CustomException(CustomErrorCode.VERIFICATION_CODE_MISMATCH)
+            }
+            true
         } catch (e: IOException) {
             e.printStackTrace()
-            false
+            throw CustomException(CustomErrorCode.VERIFICATION_SERVER_ERROR)
         }
     }
 }
