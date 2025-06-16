@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource
 
 @SpringBootTest
 @TestPropertySource(properties = ["UNIV_CERTIFICATION_API_KEY=test-key"])
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 class FileExecutorIntegrationTests: AbstractIntegrationTest(){
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
