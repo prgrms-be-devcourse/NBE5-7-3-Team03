@@ -11,7 +11,8 @@ spring:
       uri: mongodb://root:123123@localhost:27018/chat?authSource=admin
 
   profiles:
-    active: local
+    active: test
+
   servlet:
     multipart:
       enabled: true

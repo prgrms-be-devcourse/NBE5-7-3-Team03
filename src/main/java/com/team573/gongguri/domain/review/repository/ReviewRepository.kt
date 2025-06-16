@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ReviewRepository : JpaRepository<Review, Long> {
-	fun existsByGroupPurchase_groupIdAndMember_memberId(groupId: Long, memberId: Long): Boolean
+	fun existsByGroupPurchase_groupIdAndMember_memberId(groupId: Long?, memberId: Long): Boolean
 }
