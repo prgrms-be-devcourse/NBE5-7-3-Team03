@@ -49,6 +49,7 @@ class GroupPurchaseController(
         return ResponseEntity.ok(groupPurchaseService.update(id, dto))
     }
 
+
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: Long,

@@ -35,7 +35,7 @@ class MyPageService(
         )
 
         val isReviewed = reviewRepository.existsByGroupPurchase_groupIdAndMember_memberId(
-            groupPurchase.groupId,
+            groupPurchase.groupId!!,
             memberId
         )
 
