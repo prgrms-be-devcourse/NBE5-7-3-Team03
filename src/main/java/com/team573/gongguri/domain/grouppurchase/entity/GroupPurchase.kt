@@ -80,4 +80,6 @@ class GroupPurchase (
     fun markAsDeleted() {
         this.deleted = true
     }
+
+
 }
