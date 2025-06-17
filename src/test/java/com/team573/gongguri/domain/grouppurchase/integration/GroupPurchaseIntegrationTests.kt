@@ -1,6 +1,7 @@
 package com.team573.gongguri.domain.grouppurchase.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.team573.gongguri.global.security.CustomUserDetails
 import com.team573.gongguri.integration.AbstractIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -64,6 +65,24 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 	}
 
 	@Test
+	fun `관리자가 아닐 경우 결제 상태로 변환 예외`() {
+		val groupPurchaseId: Long = 10
+		val participantsId: Long = 12
+
+		val member2 = memberRepository.findById(9).get()
+
+		mockMvc.patch("/api/group-purchases/$groupPurchaseId/participants/$participantsId/confirm") {
+			contentType = MediaType.APPLICATION_JSON
+			with(user(CustomUserDetails(member2)))
+			with(csrf())
+		}.andExpect {
+			status { isForbidden() }
+		}.andDo {
+			print()
+		}
+	}
+
+	@Test
 	fun `참가자 강퇴`() {
 		val groupPurchaseId: Long = 10
 		val participantsId: Long = 12
@@ -74,6 +93,32 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 			with(csrf())
 		}.andExpect {
 			status { isNoContent() }
+		}.andDo {
+			print()
+		}
+	}
+
+	@Test
+	fun `참가자가 이미 결제를 했을 경우 참가자 강퇴 예외`() {
+		val groupPurchaseId: Long = 10
+		val participantsId: Long = 12
+
+		mockMvc.patch("/api/group-purchases/$groupPurchaseId/participants/$participantsId/confirm") {
+			contentType = MediaType.APPLICATION_JSON
+			with(user(userDetails))
+			with(csrf())
+		}.andExpect {
+			status { isNoContent() }
+		}.andDo {
+			print()
+		}
+
+		mockMvc.patch("/api/group-purchases/$groupPurchaseId/participants/$participantsId/cancel") {
+			contentType = MediaType.APPLICATION_JSON
+			with(user(userDetails))
+			with(csrf())
+		}.andExpect {
+			status { isForbidden() }
 		}.andDo {
 			print()
 		}
@@ -127,7 +172,6 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 		}.andDo {
 			print()
 		}.andReturn()
-
 
 		val content = firstResult.response.contentAsString
 		val objectMapper = ObjectMapper()

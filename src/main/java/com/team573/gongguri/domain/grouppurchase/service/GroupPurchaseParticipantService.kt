@@ -76,6 +76,4 @@ class GroupPurchaseParticipantService (
         // 관리하기 위한 참여자 조회
         return groupPurchaseParticipantRepository.findByIdOrNull(participantId) ?: throw CustomException(CustomErrorCode.NOT_FOUND_PARTICIPANT)
     }
-
-
 }
