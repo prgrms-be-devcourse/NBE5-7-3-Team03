@@ -1,0 +1,119 @@
+[
+  {
+    "_id": "6826deb4d3e6a257297b3e05",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "gdgd",
+    "createdAt": "2025-05-16T06:44:04.207Z",
+    "nickname": "0515test",
+    "room_id": 3,
+    "updatedAt": "2025-05-16T06:44:04.207Z"
+  },
+  {
+    "_id": "682a85bf9dafe22cc00112e5",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "gd",
+    "createdAt": "2025-05-19T01:13:35.103Z",
+    "nickname": "0515test",
+    "room_id": 5,
+    "updatedAt": "2025-05-19T01:13:35.103Z"
+  },
+  {
+    "_id": "682c0f9cfba6695624e90851",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "ddd",
+    "createdAt": "2025-05-20T05:14:04.104Z",
+    "nickname": "0515test",
+    "room_id": 6,
+    "updatedAt": "2025-05-20T05:14:04.104Z"
+  },
+  {
+    "_id": "682f4decbde22e31af4d4e18",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "입금했어요! 확인 부탁드려요",
+    "createdAt": "2025-05-22T16:16:44.143Z",
+    "nickname": "이데브",
+    "room_id": 29,
+    "updatedAt": "2025-05-22T16:16:44.143Z"
+  },
+  {
+    "_id": "682f4df9bde22e31af4d4e19",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "네 확인했습니다!",
+    "createdAt": "2025-05-22T16:16:57.277Z",
+    "nickname": "김데브",
+    "room_id": 29,
+    "updatedAt": "2025-05-22T16:16:57.277Z"
+  },
+  {
+    "_id": "682f4e3dbde22e31af4d4e1a",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "저도 참여하고싶어요!",
+    "createdAt": "2025-05-22T16:18:05.979Z",
+    "nickname": "박데브",
+    "room_id": 29,
+    "updatedAt": "2025-05-22T16:18:05.979Z"
+  },
+  {
+    "_id": "682f4e5ebde22e31af4d4e1b",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "입금해주시고 확인메세지 한 번 부탁드려요!!😎",
+    "createdAt": "2025-05-22T16:18:38.232Z",
+    "nickname": "김데브",
+    "room_id": 29,
+    "updatedAt": "2025-05-22T16:18:38.232Z"
+  },
+  {
+    "_id": "682f5008bde22e31af4d4e1c",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "참여하고 싶어요! 입금 완료하였습니다",
+    "createdAt": "2025-05-22T16:25:44.242Z",
+    "nickname": "지데브",
+    "room_id": 29,
+    "updatedAt": "2025-05-22T16:25:44.242Z"
+  },
+  {
+    "_id": "682f5237bde22e31af4d4e1d",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "입금 드렸습니다! 확인 부탁드려요",
+    "createdAt": "2025-05-22T16:35:03.215Z",
+    "nickname": "이데브",
+    "room_id": 30,
+    "updatedAt": "2025-05-22T16:35:03.215Z"
+  },
+  {
+    "_id": "682f523dbde22e31af4d4e1e",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "확인했습니다!",
+    "createdAt": "2025-05-22T16:35:09.350Z",
+    "nickname": "김데브",
+    "room_id": 30,
+    "updatedAt": "2025-05-22T16:35:09.350Z"
+  },
+  {
+    "_id": "682f5265bde22e31af4d4e1f",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "저도 참여하고 싶어요!",
+    "createdAt": "2025-05-22T16:35:49.125Z",
+    "nickname": "박데브",
+    "room_id": 30,
+    "updatedAt": "2025-05-22T16:35:49.125Z"
+  },
+  {
+    "_id": "682f5274bde22e31af4d4e20",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "계좌로 입금 주시고 확인 메세지 부탁드려요😎",
+    "createdAt": "2025-05-22T16:36:04.845Z",
+    "nickname": "김데브",
+    "room_id": 30,
+    "updatedAt": "2025-05-22T16:36:04.845Z"
+  },
+  {
+    "_id": "682fd981497cad5054d1cfc8",
+    "_class": "com.team573.gongguri.domain.chat.entity.ChatMessage",
+    "content": "입금완료 했습니다! 확인 부탁드려요!",
+    "createdAt": "2025-05-23T02:12:17.502Z",
+    "nickname": "지데브",
+    "room_id": 30,
+    "updatedAt": "2025-05-23T02:12:17.502Z"
+  }
+]
