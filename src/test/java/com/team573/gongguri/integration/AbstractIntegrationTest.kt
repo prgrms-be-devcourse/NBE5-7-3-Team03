@@ -1,35 +1,26 @@
 package com.team573.gongguri.integration
 
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.domain.member.repository.MemberRepository
+import com.team573.gongguri.global.security.CustomUserDetails
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.web.servlet.MockMvc
 
-@Testcontainers
-abstract class AbstractIntegrationTest {
-    companion object {
-        @Container
-        val mysqlContainer = MySQLContainer<Nothing>("mysql:8.0.33").apply {
-            withDatabaseName("testdb")
-            withUsername("testuser")
-            withPassword("testpass")
-            withExposedPorts(3306)
-            start()
-            System.setProperty("spring.datasource.url", jdbcUrl)
-            System.setProperty("spring.datasource.username", username)
-            System.setProperty("spring.datasource.password", password)
-        }
+abstract class AbstractIntegrationTest: ContainerSetUp() {
+	@Autowired
+	lateinit var mockMvc: MockMvc
 
-        @Container
-        val mongoContainer = MongoDBContainer("mongo:6.0.6").apply {
-            start()
-            val containerIpAddress = this.host
-            val port = this.getMappedPort(27017)
+	@Autowired
+	lateinit var memberRepository: MemberRepository
 
-            System.setProperty(
-                "spring.data.mongodb.uri",
-                "mongodb://$containerIpAddress:$port/testdb"
-            )
-        }
-    }
+	lateinit var member: Member
+
+	lateinit var userDetails: CustomUserDetails
+
+	@BeforeEach
+	fun setUp() {
+		member = memberRepository.findById(1).get()
+		userDetails = CustomUserDetails(member)
+	}
 }
