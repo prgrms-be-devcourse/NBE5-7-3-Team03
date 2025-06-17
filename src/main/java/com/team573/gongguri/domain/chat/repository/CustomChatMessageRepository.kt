@@ -46,7 +46,7 @@ class CustomChatMessageRepository(
         val latestMessageContents: MutableMap<Long, String> = HashMap()
 
         for (doc in results) {
-            val roomId = doc["_id"] as Long
+            val roomId = (doc["_id"] as Number).toLong()
             val content = doc.getString("latestContent")
             if (content != null) {
                 latestMessageContents[roomId] = content
