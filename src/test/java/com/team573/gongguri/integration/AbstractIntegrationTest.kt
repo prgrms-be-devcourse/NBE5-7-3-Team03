@@ -1,36 +1,26 @@
 package com.team573.gongguri.integration
 
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.junit.jupiter.Testcontainers
+import com.team573.gongguri.domain.member.entity.Member
+import com.team573.gongguri.domain.member.repository.MemberRepository
+import com.team573.gongguri.global.security.CustomUserDetails
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.web.servlet.MockMvc
 
-@Testcontainers
-abstract class AbstractIntegrationTest {
-    companion object {
+abstract class AbstractIntegrationTest: ContainerSetUp() {
+	@Autowired
+	lateinit var mockMvc: MockMvc
 
-        val mysqlContainer = MySQLContainer("mysql:8.0").apply {
-            withDatabaseName("testdb")
-            withUsername("testuser")
-            withPassword("testpass")
-            withReuse(true)
-            start()
-        }
+	@Autowired
+	lateinit var memberRepository: MemberRepository
 
-        val mongoContainer = MongoDBContainer("mongo:6.0.6").apply{
-            withReuse(true)
-            start()
-        }
+	lateinit var member: Member
 
-        @JvmStatic
-        @DynamicPropertySource
-        fun overrideProps(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl)
-            registry.add("spring.datasource.username", mysqlContainer::getUsername)
-            registry.add("spring.datasource.password", mysqlContainer::getPassword)
-            registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl)
-        }
-    }
+	lateinit var userDetails: CustomUserDetails
 
+	@BeforeEach
+	fun setUp() {
+		member = memberRepository.findById(1).get()
+		userDetails = CustomUserDetails(member)
+	}
 }

@@ -1,9 +1,9 @@
 package com.team573.gongguri.global
 
-import com.team573.gongguri.integration.AbstractIntegrationTest
+import com.team573.gongguri.integration.ContainerSetUp
 import org.junit.jupiter.api.Test
 
-class CITests : AbstractIntegrationTest(){
+class CITests : ContainerSetUp(){
     @Test
     fun `컨테이너 정상 기동 확인`() {
         println("MySQL running at: ${mysqlContainer.jdbcUrl}")

@@ -21,6 +21,11 @@ import com.team573.gongguri.util.MemberUtil
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 import org.junit.jupiter.api.*
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime

@@ -14,4 +14,14 @@ object MemberUtil {
 			password = "123123"
 		)
 	}
+
+	fun create(): Member {
+		return Member(
+			nickname = "test1",
+			univ = Univ("공구리대학교"),
+			email = "test1@test.com",
+			password = "123123"
+		)
+	}
+
 }
