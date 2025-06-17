@@ -1,5 +1,6 @@
 package com.team573.gongguri.domain.grouppurchase.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.team573.gongguri.integration.AbstractIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -14,7 +15,7 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 	fun `채팅방 리스트 조회`() {
 		val size = 10
 
-		mockMvc.get("/api/group-purchases/chat") {
+		val firstResult = mockMvc.get("/api/group-purchases/chat") {
 			contentType = MediaType.APPLICATION_JSON
 			param("progressStatus", "ALL")
 			param("size", size.toString())
@@ -23,6 +24,26 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 			status { isOk() }
 		}.andDo {
 			print()
+		}.andReturn()
+
+		val content = firstResult.response.contentAsString
+		val objectMapper = ObjectMapper()
+		val rootNode = objectMapper.readTree(content)
+		val isEmpty = rootNode.isEmpty
+
+		if (!isEmpty) {
+			val cursor = rootNode.last().get("id").asLong()
+			mockMvc.get("/api/group-purchases/chat") {
+				contentType = MediaType.APPLICATION_JSON
+				param("progressStatus", "ALL")
+				param("cursor", cursor.toString())
+				param("size", size.toString())
+				with(user(userDetails))
+			}.andExpect {
+				status { isOk() }
+			}.andDo {
+				print()
+			}
 		}
 	}
 
@@ -72,13 +93,32 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 		}.andDo {
 			print()
 		}.andReturn()
+
+		val content = firstResult.response.contentAsString
+		val objectMapper = ObjectMapper()
+		val rootNode = objectMapper.readTree(content)
+		val isEmpty = rootNode.isEmpty
+
+		if (!isEmpty) {
+			val cursor = rootNode.last().get("groupParticipantId").asLong()
+			mockMvc.get("/api/group-purchases/$groupPurchaseId/participants") {
+				contentType = MediaType.APPLICATION_JSON
+				param("size", size.toString())
+				param("cursor", cursor.toString())
+				with(user(userDetails))
+			}.andExpect {
+				status { isOk() }
+			}.andDo {
+				print()
+			}
+		}
 	}
 
 	@Test
 	fun `공동 구매를 조회`() {
 		val size = 10
 
-		mockMvc.get("/api/group-purchases") {
+		val firstResult = mockMvc.get("/api/group-purchases") {
 			contentType = MediaType.APPLICATION_JSON
 			param("size", size.toString())
 			with(user(userDetails))
@@ -86,6 +126,26 @@ class GroupPurchaseIntegrationTests: AbstractIntegrationTest() {
 			status { isOk() }
 		}.andDo {
 			print()
+		}.andReturn()
+
+
+		val content = firstResult.response.contentAsString
+		val objectMapper = ObjectMapper()
+		val rootNode = objectMapper.readTree(content)
+		val isEmpty = rootNode.isEmpty
+
+		if (!isEmpty) {
+			val cursor = rootNode.last().get("id").asLong()
+			mockMvc.get("/api/group-purchases") {
+				contentType = MediaType.APPLICATION_JSON
+				param("cursor", cursor.toString())
+				param("size", size.toString())
+				with(user(userDetails))
+			}.andExpect {
+				status { isOk() }
+			}.andDo {
+				print()
+			}
 		}
 	}
 }
