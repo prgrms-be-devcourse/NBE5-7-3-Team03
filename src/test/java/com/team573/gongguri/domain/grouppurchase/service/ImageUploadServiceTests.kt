@@ -52,7 +52,7 @@ class ImageUploadServiceTests {
             "file",
             "empty.jpg",
             "image/jpeg",
-            ByteArray(0)
+            ByteArray(3)
         )
 
         //when & then

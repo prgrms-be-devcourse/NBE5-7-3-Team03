@@ -462,7 +462,7 @@ class GroupPurchaseServiceTests {
             verify(exactly = 1) { groupPurchaseJpqlRepository.findAllWithCursorAndParticipantCount(cursorId, progressStatuses, size) }
         }
     }
-
+    
 
 
 }
