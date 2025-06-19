@@ -52,7 +52,7 @@ class ImageUploadServiceTests {
             "file",
             "empty.jpg",
             "image/jpeg",
-            ByteArray(3) // 테스트 실패
+            ByteArray(0) // 파일 내용 비어있음
         )
 
         //when & then
